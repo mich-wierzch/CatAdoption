@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+        crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cat Adoption</title>
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+<header>
+  <img class="logo" src=
+          "/images/cat_logo.png"
+       alt="placeholder">
+  <nav>
+    <ul class="nav_links">
+      <li>
+        <a th:href="@{/main}">Home</a>
+      </li>
+      <li>
+        <a th:href="@{/}">About</a>
+      </li>
+      <li>
+        <a th:href="@{/register}">Register</a>
+      </li>
+      <li>
+        <a th:href="@{/login}">Login</a>
+      </li>
+    </ul>
+  </nav>
+  <button class="add_cat">Add a Cat</button>
+</header>
+
+
+<div class="registration-container">
+
+  <form name="rgstr" th:action="@{/api/user/register}" method="post" >
+    <input type="text" name="username" placeholder="Username"
+           required="required" pattern=".{6,}" title ="Login must have at least 6 characters"/>
+    <input type="email" name="email" placeholder="Email Address" required="required"/>
+    <input type="password" name="password" placeholder="Password"  required="required"
+           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+           title="Must contain at least one number and one uppercase and lowercase
+            letter, and at least 8 or more characters" />
+    <input type="text" name="firstName" placeholder="First Name" required="required"/>
+    <input type="text" name="lastName" placeholder="Last Name" required="required"/>
+    <input type="text" name="mobile" placeholder="Mobile Number" required="required"/>
+    <button type="submit">
+      Register
+    </button>
+  </form>
+</div>
+
+
+
+<script>
+
+  // Get the registration form element
+  const registrationForm = document.forms["rgstr"];
+
+  // Add an event listener for form submission
+  registrationForm.addEventListener("submit", async (event) => {
+    event.preventDefault(); // Prevent default form submission behavior
+
+    // Send the registration form data to the server using fetch API
+    const formData = new FormData(registrationForm);
+    const response = await fetch(registrationForm.action, {
+      method: registrationForm.method,
+      body: formData,
+    });
+
+    // Check if the registration was successful (based on server response)
+    if (response.ok) {
+      const redirectUrl = await response.text(); // Get the redirect URL from the response
+      window.location.href = redirectUrl; // Redirect the user to the specified URL
+    } else {
+      // Handle registration failure (if needed)
+      console.error("Registration failed!");
+    }
+  });
+
+
+
+</script>
+
+
+
+<dialog id="addCatModal">
+
+  <h2>Add a Cat</h2>
+
+  <form id="add-cat-form"
+        method="post"
+        action="/api/cats/add/1">
+
+    <input type="text">
+
+    <button>Submit</button>
+  </form>
+
+
+  <button id="closeModal">Close</button>
+</dialog>
+
+
+
+
+
+<!--<script src="/js/script.js"></script>-->
+</body>
+</html>

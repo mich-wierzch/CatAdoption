@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Adoption</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <img class="logo" src=
+                "/images/cat_logo.png"
+             alt="placeholder">
+        <nav>
+            <ul class="nav_links">
+                <li>
+                    <a th:href="@{/main}">Home</a>
+                </li>
+                <li>
+                    <a th:href="@{/}">About</a>
+                </li>
+                <li>
+                    <a th:href="@{/register}">Register</a>
+                </li>
+                <li>
+                    <a th:href="@{/login}">Login</a>
+                </li>
+            </ul>
+        </nav>
+        <button class="add_cat">Add a Cat</button>
+    </header>
+
+
+
+
+
+
+
+    <dialog id="addCatModal">
+
+        <h2>Add a Cat</h2>
+
+        <form id="add-cat-form"
+        method="post"
+        action="/api/cats/add/1">
+
+            <input type="text">
+
+            <button>Submit</button>
+        </form>
+
+
+        <button id="closeModal">Close</button>
+    </dialog>
+
+
+
+
+<!--    <div id="catListContainer">-->
+<!--        &lt;!&ndash;Cats displayed here&ndash;&gt;-->
+<!--    </div>-->
+<script src="/js/script.js"></script>
+</body>
+</html>
