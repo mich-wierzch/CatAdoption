@@ -15,6 +15,14 @@ li, a, button {
     color: #edf0f1;
     text-decoration: none;
 }
+.user{
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: #edf0f1;
+    text-decoration: none;
+}
+
 header{
     display: flex;
     justify-content: space-between;
@@ -122,6 +130,21 @@ button:hover{
     height: 100vh;
 }
 .login input{
+    display: block;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+}
+.addcat-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+.addcat-container input, select{
     display: block;
     padding: 10px;
     margin-bottom: 10px;

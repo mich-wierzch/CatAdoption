@@ -12,6 +12,7 @@
   <img class="logo" src=
           "/images/cat_logo.png"
        alt="placeholder">
+  <p class="user" id="username-display">Guest</p>
   <nav>
     <ul class="nav_links">
       <li>
@@ -28,7 +29,7 @@
       </li>
     </ul>
   </nav>
-  <button class="add_cat">Add a Cat</button>
+  <button class="add_cat"><a th:href="@{/addCat}">Add a Cat</a></button>
 </header>
 
 <div class="login">
@@ -45,6 +46,6 @@
 
 
 
-
+<script src="/js/script.js"></script>
 </body>
 </html>

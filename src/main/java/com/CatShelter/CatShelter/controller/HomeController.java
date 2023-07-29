@@ -28,4 +28,9 @@ public class HomeController {
         return "login";
     }
 
+    @GetMapping(path="/addCat")
+    public String addCatPage(){
+        return "addCat";
+    }
+
 }

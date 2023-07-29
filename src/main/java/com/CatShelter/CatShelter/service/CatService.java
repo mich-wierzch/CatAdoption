@@ -27,6 +27,7 @@ public class CatService {
                 .age(request.getAge())
                 .breed(request.getBreed())
                 .imageUrl(request.getImageUrl())
+                .location(request.getLocation())
                 .userModel(userModel)
                 .build();
         catRepository.save(catModel);

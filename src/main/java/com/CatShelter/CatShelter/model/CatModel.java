@@ -58,6 +58,11 @@ public class CatModel {
             nullable = false
     )
     private String imageUrl;
+    @Column(
+            name="location",
+            nullable = false
+    )
+    private String location;
 
 
     @ManyToOne(
