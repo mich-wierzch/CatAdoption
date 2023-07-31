@@ -1,12 +1,15 @@
 package com.CatShelter.CatShelter.service;
 
-import com.CatShelter.CatShelter.model.CatModel;
 import com.CatShelter.CatShelter.model.PostModel;
 import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.repository.PostRepository;
+import com.CatShelter.CatShelter.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -14,20 +17,25 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
-    public PostModel createPost(CatModel cat, UserModel user){
+    public PostModel createPost(PostModel request, Long userId){
+        UserModel userModel = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
+
         PostModel postModel = PostModel.builder()
-                .catName(cat.getName())
-                .catSex(cat.getSex())
-                .catAge(cat.getAge())
-                .catBreed(cat.getBreed())
-                .imageUrl(cat.getImageUrl())
-                .description(cat.getDescription())
-                .location(cat.getLocation())
-                .userFirstName(user.getFirstName())
-                .userLastName(user.getLastName())
-                .userMobilePhone(user.getMobile())
-                .userId(user.getUserId())
+                .catName(request.getCatName())
+                .catSex(request.getCatSex())
+                .catAge(request.getCatAge())
+                .catBreed(request.getCatBreed())
+                .imageUrl(request.getImageUrl())
+                .description(request.getDescription())
+                .location(request.getLocation())
+                .userFirstName(userModel.getFirstName())
+                .userLastName(userModel.getLastName())
+                .userMobilePhone(userModel.getMobile())
+                .userModel(userModel)
+                .createdAt(LocalDate.now())
                 .build();
         postRepository.save(postModel);
         return postModel;

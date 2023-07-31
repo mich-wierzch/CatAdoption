@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Table(
         name="Posts"
@@ -33,10 +36,19 @@ public class PostModel {
     private String imageUrl;
     private String description;
     private String location;
+    private LocalDate createdAt;
     private String userFirstName;
     private String userLastName;
     private String userMobilePhone;
-    private Long userId;
+    @ManyToOne(
+            cascade = CascadeType.ALL
+    )
+    @JoinColumn(
+            name = "user_id",
+            referencedColumnName = "userId",
+            nullable = false
+    )
+    private UserModel userModel;
 
 
 

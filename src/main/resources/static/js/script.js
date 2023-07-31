@@ -29,6 +29,7 @@ function fetchPosts() {
                         <strong>Location:</strong> ${post.location}<br>
                         <strong>Posted by: </strong> ${post.userFirstName} ${post.userLastName}<br>
                         <strong>Mobile Number: ${post.userMobilePhone} </strong> <br>
+                        <strong>Added on: ${post.createdAt} </strong> <br>
                         <!-- Add other attributes as needed -->
                     </li>`;
             });
