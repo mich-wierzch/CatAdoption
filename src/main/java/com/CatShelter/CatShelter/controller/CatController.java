@@ -30,10 +30,6 @@ public class CatController {
         return new RedirectView("/main");
     }
 
-    @GetMapping(path="/getAllCats")
-    public List<CatModel> displayCats(){
-        return catService.getCatsList();
-    }
 
 
 }

@@ -30,6 +30,8 @@ public class WebSecurityConfig {
             "/login",
             "/api/user/register",
             "/api/user/get-username",
+            "/api/cats/getCats",
+            "/api/posts/getAll",
             //staticResources
             "/css/**",
             "/images/**",

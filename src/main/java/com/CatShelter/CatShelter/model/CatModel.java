@@ -63,6 +63,12 @@ public class CatModel {
             nullable = false
     )
     private String location;
+    @Column(
+            name="description",
+            length = 500
+    )
+    private String description;
+
 
 
     @ManyToOne(

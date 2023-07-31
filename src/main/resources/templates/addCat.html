@@ -42,7 +42,7 @@
   <form name="add_cat" th:action="@{/api/cats/add}" method="post" >
     <input type="text" name="name" placeholder="Cat Name" required="required"/>
 
-    <select id="gender" name="gender" required="required">
+    <select id="sex" name="sex" required="required">
       <option value="">Select Gender</option>
       <option value="Male">Male</option>
       <option value="Female">Female</option>
@@ -52,6 +52,8 @@
     <input type="text" name="breed" placeholder="Breed" required="required"/>
     <input type="text" name="imageUrl" placeholder="Cat Image URL" required="required"/>
     <input type="text" name="location" placeholder="City" required="required"/>
+    <textarea id="description" name="description"
+              rows="4" cols="50" placeholder="Describe the cat (max. 500 characters)"></textarea>
     <button type="submit">
       Post!
     </button>

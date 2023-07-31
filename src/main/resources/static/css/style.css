@@ -144,7 +144,7 @@ button:hover{
     justify-content: center;
     height: 100vh;
 }
-.addcat-container input, select{
+.addcat-container input, select, textarea{
     display: block;
     padding: 10px;
     margin-bottom: 10px;
@@ -152,4 +152,27 @@ button:hover{
     border-radius: 4px;
     font-family: "Montserrat", sans-serif;
     font-size: 16px;
+}
+#postList{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    margin:10px;
+    list-style-type: none;
+    max-width:1650px;
+
+}
+#postList li{
+    padding:15px;
+    box-sizing: border-box;
+}
+#postList img{
+    width: 300px;
+    height: auto;
+}
+.posts{
+    text-align: center;
+    font-family: "Montserrat", sans-serif;
+    padding:10px;
+
 }
