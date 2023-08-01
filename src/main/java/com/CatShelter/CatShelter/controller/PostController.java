@@ -44,7 +44,7 @@ public class PostController {
     }
 
     @GetMapping(path="/getByPostId/{postId}")
-    public List<PostDto> getPostByPostId(@PathVariable Long postId){
+    public PostDto getPostByPostId(@PathVariable Long postId){
         return postService.findPostByPostId(postId);
     }
 

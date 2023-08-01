@@ -59,11 +59,9 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    public List<PostDto> findPostByPostId(Long postId){
-        List<PostModel> posts = postRepository.findByPostId(postId);
-        return posts.stream()
-                .map(postMapper::convertToDto)
-                .collect(Collectors.toList());
+    public PostDto findPostByPostId(Long postId){
+        PostModel post = postRepository.findByPostId(postId);
+        return postMapper.convertToDto(post);
     }
 
     public void deletePost(Long postId){
