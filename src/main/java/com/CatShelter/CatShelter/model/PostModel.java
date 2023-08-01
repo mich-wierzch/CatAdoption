@@ -40,15 +40,13 @@ public class PostModel {
     private String userFirstName;
     private String userLastName;
     private String userMobilePhone;
-    @ManyToOne(
-            cascade = CascadeType.ALL
-    )
+    @ManyToOne
     @JoinColumn(
             name = "user_id",
             referencedColumnName = "userId",
             nullable = false
     )
-    private UserModel userModel;
+    private UserModel user;
 
 
 

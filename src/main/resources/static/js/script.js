@@ -3,6 +3,9 @@ function updateUsername() {
         .then(response => response.text())
         .then(username => {
             document.getElementById('username-display').textContent = username;
+            if (username !== 'anonymousUser'){
+                document.getElementById('logout-link').style.display = 'inline-block';
+            }
         })
         .catch(error => {
             console.error('Error fetching username:', error);
@@ -28,8 +31,8 @@ function fetchPosts() {
                         <strong>Description:</strong> ${post.description}<br>
                         <strong>Location:</strong> ${post.location}<br>
                         <strong>Posted by: </strong> ${post.userFirstName} ${post.userLastName}<br>
-                        <strong>Mobile Number: ${post.userMobilePhone} </strong> <br>
-                        <strong>Added on: ${post.createdAt} </strong> <br>
+                        <strong>Mobile Number:</strong> ${post.userMobilePhone}  <br>
+                        <strong>Added on:</strong> ${post.createdAt}  <br>
                         <!-- Add other attributes as needed -->
                     </li>`;
             });

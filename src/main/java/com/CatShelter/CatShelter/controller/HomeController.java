@@ -33,4 +33,9 @@ public class HomeController {
         return "addCat";
     }
 
+    @GetMapping(path="/myposts")
+    public String myPostsPage() {
+        return "my_posts";
+    }
+
 }

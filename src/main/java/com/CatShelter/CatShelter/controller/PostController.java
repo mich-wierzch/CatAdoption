@@ -2,15 +2,14 @@ package com.CatShelter.CatShelter.controller;
 
 import com.CatShelter.CatShelter.model.PostModel;
 import com.CatShelter.CatShelter.model.UserModel;
-import com.CatShelter.CatShelter.service.PostService;
 import com.CatShelter.CatShelter.repository.PostRepository;
+import com.CatShelter.CatShelter.service.PostService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
@@ -33,5 +32,18 @@ public class PostController {
     @GetMapping(path="/getAll")
     public List<PostModel> getPosts(){
         return postService.findAllPosts();
+    }
+
+    @GetMapping(path="/getByUser")
+    public List<PostModel> getPostsByUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
+
+        return postService.findPostsByUser(userId);
+    }
+
+    @DeleteMapping(path="/delete/{postId}")
+    public void deletePost(@PathVariable Long postId){
+        postRepository.deleteById(postId);
     }
 }

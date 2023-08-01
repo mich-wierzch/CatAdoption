@@ -176,3 +176,26 @@ button:hover{
     padding:10px;
 
 }
+
+#userPostList{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    margin:10px;
+    list-style-type: none;
+    max-width:1650px;
+
+}
+#userPostList li{
+    padding:15px;
+    box-sizing: border-box;
+}
+#userPostList img{
+    width: 300px;
+    height: auto;
+}
+.posts {
+    text-align: center;
+    font-family: "Montserrat", sans-serif;
+    padding: 10px;
+}

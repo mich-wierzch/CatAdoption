@@ -34,7 +34,7 @@ public class PostService {
                 .userFirstName(userModel.getFirstName())
                 .userLastName(userModel.getLastName())
                 .userMobilePhone(userModel.getMobile())
-                .userModel(userModel)
+                .user(userModel)
                 .createdAt(LocalDate.now())
                 .build();
         postRepository.save(postModel);
@@ -43,5 +43,13 @@ public class PostService {
 
     public List<PostModel> findAllPosts(){
         return postRepository.findAll();
+    }
+
+    public List<PostModel> findPostsByUser(Long userId){
+        return postRepository.findByUserUserId(userId);
+    }
+
+    public void deletePost(Long postId){
+        postRepository.deleteById(postId);
     }
 }

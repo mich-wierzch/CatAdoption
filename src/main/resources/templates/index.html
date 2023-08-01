@@ -24,10 +24,16 @@
                     <a th:href="@{/}">About</a>
                 </li>
                 <li>
+                    <a th:href="@{/myposts}">My Posts</a>
+                </li>
+                <li>
                     <a th:href="@{/register}">Register</a>
                 </li>
                 <li>
                     <a th:href="@{/login}">Login</a>
+                </li>
+                <li id="logout-link" style="display: none">
+                    <a th:href="@{/logout}">Logout</a>
                 </li>
             </ul>
         </nav>
