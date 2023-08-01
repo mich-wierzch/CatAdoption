@@ -15,7 +15,7 @@ public class PostMapper {
                 .catBreed(postModel.getCatBreed())
                 .imageUrl(postModel.getImageUrl())
                 .description(postModel.getDescription())
-                .location(postModel.getDescription())
+                .location(postModel.getLocation())
                 .createdAt(postModel.getCreatedAt())
                 .userFirstName(postModel.getUserFirstName())
                 .userLastName(postModel.getUserLastName())
