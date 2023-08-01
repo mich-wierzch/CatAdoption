@@ -1,5 +1,6 @@
 package com.CatShelter.CatShelter.controller;
 
+import com.CatShelter.CatShelter.dto.PostDto;
 import com.CatShelter.CatShelter.model.PostModel;
 import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.repository.PostRepository;
@@ -30,16 +31,21 @@ public class PostController {
         return new RedirectView("/main");
     }
     @GetMapping(path="/getAll")
-    public List<PostModel> getPosts(){
+    public List<PostDto> getPosts(){
         return postService.findAllPosts();
     }
 
     @GetMapping(path="/getByUser")
-    public List<PostModel> getPostsByUser(){
+    public List<PostDto> getPostsByUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
 
         return postService.findPostsByUser(userId);
+    }
+
+    @GetMapping(path="/getByPostId/{postId}")
+    public List<PostDto> getPostByPostId(@PathVariable Long postId){
+        return postService.findPostByPostId(postId);
     }
 
     @DeleteMapping(path="/delete/{postId}")

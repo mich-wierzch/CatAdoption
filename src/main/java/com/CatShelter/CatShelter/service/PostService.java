@@ -1,5 +1,7 @@
 package com.CatShelter.CatShelter.service;
 
+import com.CatShelter.CatShelter.dto.PostDto;
+import com.CatShelter.CatShelter.mapper.PostMapper;
 import com.CatShelter.CatShelter.model.PostModel;
 import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.repository.PostRepository;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -18,6 +21,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final PostMapper postMapper;
 
     public PostModel createPost(PostModel request, Long userId){
         UserModel userModel = userRepository.findById(userId)
@@ -41,15 +45,30 @@ public class PostService {
         return postModel;
     }
 
-    public List<PostModel> findAllPosts(){
-        return postRepository.findAll();
+    public List<PostDto> findAllPosts(){
+        List<PostModel> posts = postRepository.findAll();
+        return posts.stream()
+                .map(postMapper::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    public List<PostModel> findPostsByUser(Long userId){
-        return postRepository.findByUserUserId(userId);
+    public List<PostDto> findPostsByUser(Long userId){
+        List<PostModel> posts = postRepository.findByUserUserId(userId);
+        return posts.stream()
+                .map(postMapper::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<PostDto> findPostByPostId(Long postId){
+        List<PostModel> posts = postRepository.findByPostId(postId);
+        return posts.stream()
+                .map(postMapper::convertToDto)
+                .collect(Collectors.toList());
     }
 
     public void deletePost(Long postId){
         postRepository.deleteById(postId);
     }
+
+
 }
