@@ -27,25 +27,27 @@ public class WebSecurityConfig {
     private final UserService userService;
 
     private static final String[] UNAUTH_WHITELIST = {
-            //api
-            "/",
-            "/main",
-            "/register",
-            "/login",
-            "/api/user/register",
-            "/api/user/get-username",
-            "/api/cats/getCats",
-            "/api/posts/getAll",
 
-
-            //swagger
-            "/v3/api-docs/**",
-            "/swagger-ui/**",
-
-            //staticResources
-            "/css/**",
-            "/images/**",
-            "/js/**"
+            "*"
+//            //api
+//            "/",
+//            "/main",
+//            "/register",
+//            "/login",
+//            "/api/user/register",
+//            "/api/user/get-username",
+//            "/api/cats/getCats",
+//            "/api/posts/getAll",
+//
+//
+//            //swagger
+//            "/v3/api-docs/**",
+//            "/swagger-ui/**",
+//
+//            //staticResources
+//            "/css/**",
+//            "/images/**",
+//            "/js/**"
     };
     AuthenticationManager authenticationManager;
 
@@ -62,7 +64,7 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(UNAUTH_WHITELIST).permitAll() //Allows unauthenticated access to URLs
-                        .anyRequest().authenticated()) //Require authentication for all others URLs not specified above
+                        .anyRequest().permitAll()) //Require authentication for all others URLs not specified above
                 .authenticationManager(authenticationManager)
                 .formLogin()
                     .loginPage("/login") //specifies the custom login page
