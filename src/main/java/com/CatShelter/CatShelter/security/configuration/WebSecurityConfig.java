@@ -67,8 +67,8 @@ public class WebSecurityConfig {
                         .anyRequest().permitAll()) //Require authentication for all others URLs not specified above
                 .authenticationManager(authenticationManager)
                 .formLogin()
-                    .loginPage("/login") //specifies the custom login page
-                    .defaultSuccessUrl("/main")//redirect to main page after logged in
+//                    .loginPage("/login") //specifies the custom login page
+//                    .defaultSuccessUrl("/main")//redirect to main page after logged in
                     .permitAll()
                     .and()
                 .logout()
