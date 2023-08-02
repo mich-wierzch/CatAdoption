@@ -17,7 +17,7 @@ public class UserController {
 
 
     @PostMapping(path="/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String add(UserModel userModel){
+    public String add(@RequestBody UserModel userModel){
        UserModel newUser = userService.addUser(userModel);
        return "Registered";
     }
