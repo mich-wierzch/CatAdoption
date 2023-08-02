@@ -7,8 +7,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -52,6 +55,14 @@ public class WebSecurityConfig {
     AuthenticationManager authenticationManager;
 
     @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+        throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
@@ -66,11 +77,6 @@ public class WebSecurityConfig {
                         .requestMatchers(UNAUTH_WHITELIST).permitAll() //Allows unauthenticated access to URLs
                         .anyRequest().permitAll()) //Require authentication for all others URLs not specified above
                 .authenticationManager(authenticationManager)
-                .formLogin()
-//                    .loginPage("/login") //specifies the custom login page
-//                    .defaultSuccessUrl("/main")//redirect to main page after logged in
-                    .permitAll()
-                    .and()
                 .logout()
                     .logoutSuccessUrl("/login?logout") //redirect to login page after user logs out
                     .permitAll();
@@ -87,6 +93,8 @@ public class WebSecurityConfig {
         provider.setUserDetailsService(userService);
         return provider;
     }
+
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

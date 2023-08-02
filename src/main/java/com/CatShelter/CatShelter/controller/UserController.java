@@ -1,19 +1,33 @@
 package com.CatShelter.CatShelter.controller;
 
 import com.CatShelter.CatShelter.model.UserModel;
+import com.CatShelter.CatShelter.request.LoginRequest;
 import com.CatShelter.CatShelter.service.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path="/api/user")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+
+
+    @PostMapping(path="/login",
+            consumes = MediaType.APPLICATION_JSON_VALUE) String login(@RequestBody LoginRequest loginRequest){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return "Logged in";
+    }
 
 
     @PostMapping(path="/register", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -28,7 +42,7 @@ public class UserController {
         if (authentication != null && authentication.isAuthenticated()){
             return authentication.getName();
         } else {
-            return "Guest";
+            return null;
         }
     }
 

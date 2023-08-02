@@ -49,7 +49,6 @@ public class UserModel implements UserDetails {
     )
     private String email;
 
-    @JsonIgnore
     @ToString.Exclude
     @Column(
             name="password",

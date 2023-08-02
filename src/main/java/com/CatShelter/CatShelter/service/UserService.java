@@ -89,8 +89,5 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
-//        return userRepository.findByEmail(email)
-//                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-//
     }
 }
