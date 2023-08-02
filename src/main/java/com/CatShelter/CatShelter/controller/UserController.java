@@ -3,13 +3,10 @@ package com.CatShelter.CatShelter.controller;
 import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequestMapping(path="/api/user")
@@ -20,9 +17,9 @@ public class UserController {
 
 
     @PostMapping(path="/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public RedirectView add(UserModel userModel){
+    public String add(UserModel userModel){
        UserModel newUser = userService.addUser(userModel);
-       return new RedirectView("/login");
+       return "Registered";
     }
 
     @GetMapping(path="/get-username")
@@ -33,6 +30,25 @@ public class UserController {
         } else {
             return "Guest";
         }
+    }
+
+    @PatchMapping(path="/update")
+    public UserModel updateUser(UserModel userModel){
+        String email = SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName();
+        return userService.updateUser(userModel, email);
+
+    }
+
+    @DeleteMapping(path="/delete")
+    public UserModel deleteUser(){
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+        return userService.deleteUser(email);
     }
 
 }

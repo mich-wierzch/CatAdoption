@@ -24,6 +24,7 @@ public class WebSecurityConfig {
     private final UserService userService;
 
     private static final String[] UNAUTH_WHITELIST = {
+            //api
             "/",
             "/main",
             "/register",
@@ -32,6 +33,12 @@ public class WebSecurityConfig {
             "/api/user/get-username",
             "/api/cats/getCats",
             "/api/posts/getAll",
+
+
+            //swagger
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+
             //staticResources
             "/css/**",
             "/images/**",
