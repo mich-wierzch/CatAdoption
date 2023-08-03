@@ -14,10 +14,6 @@ public class EndpointWhitelist {
 //            //swagger
 //            "/v3/api-docs/**",
 //            "/swagger-ui/**",
-//
-//            //staticResources
-//            "/css/**",
-//            "/images/**",
-//            "/js/**"
+
     };
 }
