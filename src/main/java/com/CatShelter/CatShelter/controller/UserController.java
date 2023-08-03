@@ -1,7 +1,8 @@
 package com.CatShelter.CatShelter.controller;
 
+import com.CatShelter.CatShelter.dto.RegisterRequestDto;
 import com.CatShelter.CatShelter.model.UserModel;
-import com.CatShelter.CatShelter.request.LoginRequest;
+import com.CatShelter.CatShelter.dto.LoginRequestDto;
 import com.CatShelter.CatShelter.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -21,18 +22,16 @@ public class UserController {
 
 
     @PostMapping(path="/login",
-            consumes = MediaType.APPLICATION_JSON_VALUE) String login(@RequestBody LoginRequest loginRequest){
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    String login(@RequestBody LoginRequestDto loginRequest){
+        userService.loginUser(loginRequest, authenticationManager);
         return "Logged in";
     }
 
 
     @PostMapping(path="/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String add(@RequestBody UserModel userModel){
-       UserModel newUser = userService.addUser(userModel);
+    public String add(@RequestBody RegisterRequestDto registerRequest){
+       userService.addUser(registerRequest);
        return "Registered";
     }
 

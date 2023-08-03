@@ -77,9 +77,8 @@ public class WebSecurityConfig {
                         .requestMatchers(UNAUTH_WHITELIST).permitAll() //Allows unauthenticated access to URLs
                         .anyRequest().permitAll()) //Require authentication for all others URLs not specified above
                 .authenticationManager(authenticationManager)
-                .logout()
-                    .logoutSuccessUrl("/login?logout") //redirect to login page after user logs out
-                    .permitAll();
+                .logout();
+
 
 
         return http.build();

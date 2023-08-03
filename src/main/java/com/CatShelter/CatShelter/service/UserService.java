@@ -1,23 +1,24 @@
 package com.CatShelter.CatShelter.service;
 
+import com.CatShelter.CatShelter.dto.LoginRequestDto;
+import com.CatShelter.CatShelter.dto.RegisterRequestDto;
 import com.CatShelter.CatShelter.model.PostModel;
 import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.model.UserRole;
 import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -27,24 +28,33 @@ public class UserService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final PostRepository postRepository;
 
-    public UserModel addUser(UserModel request){
-        boolean userExists = userRepository.findByUsername(request.getUsername()).isPresent();
+    public LoginRequestDto loginUser(LoginRequestDto loginRequest,
+                                     AuthenticationManager authenticationManager){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return loginRequest;
+    }
+
+    public RegisterRequestDto addUser(RegisterRequestDto registerRequest){
+        boolean userExists = userRepository.findByUsername(registerRequest.getUsername()).isPresent();
 
         if (userExists){
             throw new IllegalStateException("Username taken");
         }
-        if(userRepository.existsByEmail(request.getEmail())){
+        if(userRepository.existsByEmail(registerRequest.getEmail())){
             throw new IllegalStateException("Email already in use");
         }
         UserModel userModel = UserModel.builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .password(bCryptPasswordEncoder.encode(request.getPassword()))
+                .username(registerRequest.getUsername())
+                .email(registerRequest.getEmail())
+                .password(bCryptPasswordEncoder.encode(registerRequest.getPassword()))
                 .userRole(UserRole.USER)
                 .build();
         System.out.println(userModel);
         userRepository.save(userModel);
-        return userModel;
+        return registerRequest;
 
     }
 
