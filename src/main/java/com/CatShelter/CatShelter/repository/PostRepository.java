@@ -9,4 +9,5 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<PostModel, Long> {
 
     List<PostModel> findByUserUserId(Long userId);
+    PostModel findByPostId(Long postId);
 }

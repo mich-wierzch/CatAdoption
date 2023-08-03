@@ -1,5 +1,6 @@
 package com.CatShelter.CatShelter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -48,7 +49,6 @@ public class UserModel implements UserDetails {
     )
     private String email;
 
-
     @ToString.Exclude
     @Column(
             name="password",
@@ -58,20 +58,20 @@ public class UserModel implements UserDetails {
 
 
     @Column(
-            name="first_name",
-            nullable = false
+            name="first_name"
+
     )
     private String firstName;
 
 
     @Column(
-            name="last_name",
-            nullable = false
+            name="last_name"
+
     )
     private String lastName;
     @Column(
-            name="mobile_number",
-            nullable = false
+            name="mobile_number"
+
     )
     private String mobile;
     @Enumerated(EnumType.STRING)

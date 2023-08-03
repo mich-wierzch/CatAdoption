@@ -1,5 +1,7 @@
 package com.CatShelter.CatShelter.service;
 
+import com.CatShelter.CatShelter.dto.PostDto;
+import com.CatShelter.CatShelter.mapper.PostMapper;
 import com.CatShelter.CatShelter.model.PostModel;
 import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.repository.PostRepository;
@@ -9,8 +11,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -18,8 +20,9 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final PostMapper postMapper;
 
-    public PostModel createPost(PostModel request, Long userId){
+    public PostDto createPost(PostDto request, Long userId){
         UserModel userModel = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
 
@@ -38,18 +41,31 @@ public class PostService {
                 .createdAt(LocalDate.now())
                 .build();
         postRepository.save(postModel);
-        return postModel;
+        return request;
     }
 
-    public List<PostModel> findAllPosts(){
-        return postRepository.findAll();
+    public List<PostDto> findAllPosts(){
+        List<PostModel> posts = postRepository.findAll();
+        return posts.stream()
+                .map(postMapper::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    public List<PostModel> findPostsByUser(Long userId){
-        return postRepository.findByUserUserId(userId);
+    public List<PostDto> findPostsByUser(Long userId){
+        List<PostModel> posts = postRepository.findByUserUserId(userId);
+        return posts.stream()
+                .map(postMapper::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public PostDto findPostByPostId(Long postId){
+        PostModel post = postRepository.findByPostId(postId);
+        return postMapper.convertToDto(post);
     }
 
     public void deletePost(Long postId){
         postRepository.deleteById(postId);
     }
+
+
 }
