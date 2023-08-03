@@ -29,29 +29,7 @@ public class WebSecurityConfig {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserService userService;
 
-    private static final String[] UNAUTH_WHITELIST = {
-
-            "*"
-//            //api
-//            "/",
-//            "/main",
-//            "/register",
-//            "/login",
-//            "/api/user/register",
-//            "/api/user/get-username",
-//            "/api/cats/getCats",
-//            "/api/posts/getAll",
-//
-//
-//            //swagger
-//            "/v3/api-docs/**",
-//            "/swagger-ui/**",
-//
-//            //staticResources
-//            "/css/**",
-//            "/images/**",
-//            "/js/**"
-    };
+    private static final String[] unauthWhitelist = EndpointWhitelist.unauthWhitelist;
     AuthenticationManager authenticationManager;
 
     @Bean
@@ -74,11 +52,11 @@ public class WebSecurityConfig {
                 .and()
                 .csrf().disable()
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(UNAUTH_WHITELIST).permitAll() //Allows unauthenticated access to URLs
+                        .requestMatchers(unauthWhitelist).permitAll() //Allows unauthenticated access to URLs
                         .anyRequest().permitAll()) //Require authentication for all others URLs not specified above
                 .authenticationManager(authenticationManager)
                 .logout();
-
+    //TODO: EDIT SECURITY IMPLEMENTATION
 
 
         return http.build();
