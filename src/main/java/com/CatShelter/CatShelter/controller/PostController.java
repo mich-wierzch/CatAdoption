@@ -7,7 +7,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 @RequestMapping(path="/api/posts")
 @AllArgsConstructor
@@ -17,11 +19,12 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping(path="/add")
-    public PostDto add(PostDto postDto){
+    public PostDto add(@RequestBody PostDto postDto,
+                       @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
 
-        return postService.createPost(postDto, userId);
+        return postService.createPost(postDto,imageFile, userId);
 
     }
     @GetMapping(path="/getAll")

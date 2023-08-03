@@ -9,8 +9,11 @@ import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,16 +25,18 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostMapper postMapper;
 
-    public PostDto createPost(PostDto request, Long userId){
+    public PostDto createPost(PostDto request, MultipartFile imageFile, Long userId) throws IOException {
         UserModel userModel = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
 
+        //TODO: CHECK IF FILE UPLOADING WORKS CORRECTLY
         PostModel postModel = PostModel.builder()
                 .catName(request.getCatName())
                 .catSex(request.getCatSex())
                 .catAge(request.getCatAge())
                 .catBreed(request.getCatBreed())
-                .imageUrl(request.getImageUrl())
+//                .imageUrl(request.getImageUrl())
+                .imageFile(Base64.getEncoder().encodeToString(imageFile.getBytes()))
                 .description(request.getDescription())
                 .location(request.getLocation())
                 .userFirstName(userModel.getFirstName())

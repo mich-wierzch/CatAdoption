@@ -34,6 +34,12 @@ public class UserController {
        return "Registered";
     }
 
+    @GetMapping(path="/session")
+    public boolean isLoggedIn(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.isAuthenticated();
+    }
+
     @GetMapping(path="/get-username")
     public String getUsername(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

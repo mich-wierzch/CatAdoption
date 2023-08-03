@@ -16,7 +16,7 @@ public class PostDto {
     private String catSex;
     private Integer catAge;
     private String catBreed;
-    private String imageUrl;
+    private String imageFile;
     private String description;
     private String location;
     private LocalDate createdAt;
