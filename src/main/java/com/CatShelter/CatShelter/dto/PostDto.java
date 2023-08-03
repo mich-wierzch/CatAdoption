@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class PostDto {
-    private Long postId;
     private String catName;
     private String catSex;
     private Integer catAge;

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 public class PostMapper {
     public PostDto convertToDto(PostModel postModel){
         return PostDto.builder()
-                .postId(postModel.getPostId())
                 .catName(postModel.getCatName())
                 .catSex(postModel.getCatSex())
                 .catAge(postModel.getCatAge())
