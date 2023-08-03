@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +22,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostMapper postMapper;
 
-    public PostModel createPost(PostModel request, Long userId){
+    public PostDto createPost(PostDto request, Long userId){
         UserModel userModel = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
 
@@ -42,7 +41,7 @@ public class PostService {
                 .createdAt(LocalDate.now())
                 .build();
         postRepository.save(postModel);
-        return postModel;
+        return request;
     }
 
     public List<PostDto> findAllPosts(){
