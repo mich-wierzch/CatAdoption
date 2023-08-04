@@ -1,11 +1,8 @@
 package com.CatShelter.CatShelter.controller;
 
 import com.CatShelter.CatShelter.dto.PostDto;
-import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.service.PostService;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,10 +18,8 @@ public class PostController {
     @PostMapping(path="/add")
     public PostDto add(@RequestBody PostDto postDto,
                        @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
 
-        return postService.createPost(postDto,imageFile, userId);
+        return postService.createPost(postDto,imageFile);
 
     }
     @GetMapping(path="/getAll")
@@ -34,10 +29,7 @@ public class PostController {
 
     @GetMapping(path="/getByUser")
     public List<PostDto> getPostsByUser(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
-
-        return postService.findPostsByUser(userId);
+        return postService.findPostsByUser();
     }
 
     @GetMapping(path="/getByPostId/{postId}")

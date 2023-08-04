@@ -8,6 +8,8 @@ import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,7 +27,12 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostMapper postMapper;
 
-    public PostDto createPost(PostDto request, MultipartFile imageFile, Long userId) throws IOException {
+    public PostDto createPost(PostDto request, MultipartFile imageFile) throws IOException {
+
+        Authentication authentication = SecurityContextHolder
+                .getContext().getAuthentication();
+        Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
+
         UserModel userModel = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
 
@@ -56,7 +63,11 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    public List<PostDto> findPostsByUser(Long userId){
+    public List<PostDto> findPostsByUser(){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
+
         List<PostModel> posts = postRepository.findByUserUserId(userId);
         return posts.stream()
                 .map(postMapper::convertToDto)
