@@ -16,10 +16,8 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping(path="/add")
-    public PostDto add(@RequestBody PostDto postDto,
-                       @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
-
-        return postService.createPost(postDto,imageFile);
+    public PostDto add(@RequestBody PostDto postDto) {
+        return postService.createPost(postDto);
 
     }
     @GetMapping(path="/getAll")

@@ -27,7 +27,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostMapper postMapper;
 
-    public PostDto createPost(PostDto request, MultipartFile imageFile) throws IOException {
+    public PostDto createPost(PostDto request){
 
         Authentication authentication = SecurityContextHolder
                 .getContext().getAuthentication();
@@ -43,7 +43,7 @@ public class PostService {
                 .catAge(request.getCatAge())
                 .catBreed(request.getCatBreed())
 //                .imageUrl(request.getImageUrl())
-                .imageFile(Base64.getEncoder().encodeToString(imageFile.getBytes()))
+                .imageFile(request.getImageFile())
                 .description(request.getDescription())
                 .location(request.getLocation())
                 .userFirstName(userModel.getFirstName())
