@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -39,7 +40,6 @@ public class PostService {
                 .catSex(request.getCatSex())
                 .catAge(request.getCatAge())
                 .catBreed(request.getCatBreed())
-//                .imageUrl(request.getImageUrl())
                 .imageFile(request.getImageFile())
                 .description(request.getDescription())
                 .location(request.getLocation())
@@ -77,7 +77,11 @@ public class PostService {
     }
 
     public void deletePost(Long postId){
+        PostModel post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post with id " + postId + " not found"));
+
         postRepository.deleteById(postId);
+
     }
 
 
