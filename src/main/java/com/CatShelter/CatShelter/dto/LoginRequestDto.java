@@ -1,9 +1,10 @@
 package com.CatShelter.CatShelter.dto;
 
+import lombok.Data;
 import lombok.Getter;
 
-@Getter
+@Data
 public class LoginRequestDto {
-    String email;
-    String password;
+    private String email;
+    private String password;
 }

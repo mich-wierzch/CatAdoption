@@ -8,12 +8,11 @@ import org.springframework.stereotype.Component;
 public class PostMapper {
     public PostDto convertToDto(PostModel postModel){
         return PostDto.builder()
-                .postId(postModel.getPostId())
                 .catName(postModel.getCatName())
                 .catSex(postModel.getCatSex())
                 .catAge(postModel.getCatAge())
                 .catBreed(postModel.getCatBreed())
-                .imageUrl(postModel.getImageUrl())
+                .imageFile(postModel.getImageFile())
                 .description(postModel.getDescription())
                 .location(postModel.getLocation())
                 .createdAt(postModel.getCreatedAt())

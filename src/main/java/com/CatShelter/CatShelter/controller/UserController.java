@@ -2,13 +2,12 @@ package com.CatShelter.CatShelter.controller;
 
 import com.CatShelter.CatShelter.dto.LoginRequestDto;
 import com.CatShelter.CatShelter.dto.RegisterRequestDto;
+import com.CatShelter.CatShelter.dto.UserDto;
 import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,33 +33,26 @@ public class UserController {
        return "Registered";
     }
 
-    @GetMapping(path="/get-username")
-    public String getUsername(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()){
-            return authentication.getName();
-        } else {
-            return null;
-        }
+    @GetMapping(path="/session")
+    public boolean isLoggedIn(){
+        return userService.isUserSessionActive();
     }
+
+    @GetMapping(path="/details")
+    public UserDto fetchUserDetails(){
+        return userService.fetchUserInformation();
+    }
+
 
     @PatchMapping(path="/update")
     public UserModel updateUser(UserModel userModel){
-        String email = SecurityContextHolder
-                        .getContext()
-                        .getAuthentication()
-                        .getName();
-        return userService.updateUser(userModel, email);
+        return userService.updateUser(userModel);
 
     }
 
     @DeleteMapping(path="/delete")
     public UserModel deleteUser(){
-        String email = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName();
-        return userService.deleteUser(email);
+        return userService.deleteUser();
     }
 
 }
