@@ -76,6 +76,7 @@ public class UserModel implements UserDetails {
     private String mobile;
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+    private boolean isBanned = false;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -90,7 +91,7 @@ public class UserModel implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !isBanned;
     }
 
     @Override

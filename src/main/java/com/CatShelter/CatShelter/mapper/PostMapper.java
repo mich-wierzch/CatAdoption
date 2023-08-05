@@ -12,7 +12,6 @@ public class PostMapper {
                 .catSex(postModel.getCatSex())
                 .catAge(postModel.getCatAge())
                 .catBreed(postModel.getCatBreed())
-//                .imageUrl(postModel.getImageUrl())
                 .imageFile(postModel.getImageFile())
                 .description(postModel.getDescription())
                 .location(postModel.getLocation())

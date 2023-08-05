@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -33,17 +34,21 @@ public class UserService implements UserDetailsService {
 
     public LoginRequestDto loginUser(LoginRequestDto loginRequest,
                                      AuthenticationManager authenticationManager){
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return loginRequest;
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return loginRequest;
+        } catch (NullPointerException | AuthenticationException e){
+            throw new IllegalArgumentException("Invalid Credentials");
+        }
     }
 
     public RegisterRequestDto addUser(RegisterRequestDto registerRequest){
-        boolean userExists = userRepository.findByUsername(registerRequest.getUsername()).isPresent();
 
-        if (userExists){
+        if (userRepository.findByUsername(registerRequest.getUsername()).isPresent()){
             throw new IllegalStateException("Username taken");
         }
         if(userRepository.existsByEmail(registerRequest.getEmail())){
