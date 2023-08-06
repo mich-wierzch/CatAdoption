@@ -45,13 +45,13 @@ public class UserController {
 
 
     @PatchMapping(path="/update")
-    public UserModel updateUser(UserModel userModel){
-        return userService.updateUser(userModel);
+    public UserDto updateUser(UserDto user){
+        return userService.updateUser(user);
 
     }
 
     @DeleteMapping(path="/delete")
-    public UserModel deleteUser(){
+    public UserDto deleteUser(){
         return userService.deleteUser();
     }
 
