@@ -10,6 +10,7 @@ import com.CatShelter.CatShelter.model.UserRole;
 import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -78,7 +79,9 @@ public class UserService implements UserDetailsService {
     public boolean isUserSessionActive(){
         Authentication authentication = SecurityContextHolder
                 .getContext().getAuthentication();
-        return authentication != null && authentication.isAuthenticated();
+        return authentication != null && !(authentication instanceof AnonymousAuthenticationToken)
+                && authentication.isAuthenticated();
+
     }
 
     public UserDto updateUser(UserDto user){
