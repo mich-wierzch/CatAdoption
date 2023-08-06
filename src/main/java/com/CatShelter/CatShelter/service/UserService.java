@@ -81,28 +81,29 @@ public class UserService implements UserDetailsService {
         return authentication != null && authentication.isAuthenticated();
     }
 
-    public UserModel updateUser(UserModel userModel){
+    public UserDto updateUser(UserDto user){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         UserModel existingUser = userRepository.findByEmail(email);
 
-        if(userModel.getFirstName()!=null){
-            existingUser.setFirstName(userModel.getFirstName());
+        if(user.getFirstName()!=null){
+            existingUser.setFirstName(user.getFirstName());
         }
-        if (userModel.getLastName()!=null){
-            existingUser.setLastName(userModel.getLastName());
+        if (user.getLastName()!=null){
+            existingUser.setLastName(user.getLastName());
         }
-        if (userModel.getMobile()!=null){
-            existingUser.setMobile(userModel.getMobile());
+        if (user.getMobile()!=null){
+            existingUser.setMobile(user.getMobile());
         }
         userRepository.save(existingUser);
-        return existingUser;
+        return userMapper.convertUserToDto(existingUser);
     }
 
-    public UserModel deleteUser(){
+    public UserDto deleteUser(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
        UserModel user = userRepository.findByEmail(email);
+
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedEmail = authentication.getName();
@@ -114,7 +115,7 @@ public class UserService implements UserDetailsService {
        List<PostModel> userPosts = postRepository.findByUserUserId(user.getUserId());
        postRepository.deleteAll(userPosts);
        userRepository.delete(user);
-       return user;
+       return userMapper.convertUserToDto(user);
     }
 
     @Override

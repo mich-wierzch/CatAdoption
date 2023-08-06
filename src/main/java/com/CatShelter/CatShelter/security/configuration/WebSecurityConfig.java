@@ -1,5 +1,6 @@
 package com.CatShelter.CatShelter.security.configuration;
 
+import com.CatShelter.CatShelter.model.UserRole;
 import com.CatShelter.CatShelter.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
