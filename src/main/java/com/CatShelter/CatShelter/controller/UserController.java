@@ -3,7 +3,6 @@ package com.CatShelter.CatShelter.controller;
 import com.CatShelter.CatShelter.dto.LoginRequestDto;
 import com.CatShelter.CatShelter.dto.RegisterRequestDto;
 import com.CatShelter.CatShelter.dto.UserDto;
-import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
