@@ -79,9 +79,15 @@ public class UserService implements UserDetailsService {
     public boolean isUserSessionActive(){
         Authentication authentication = SecurityContextHolder
                 .getContext().getAuthentication();
-        return authentication != null && !(authentication instanceof AnonymousAuthenticationToken)
-                && authentication.isAuthenticated();
 
+        if (authentication != null){
+            System.out.println("Authentication Details: " + authentication);
+            System.out.println("Is Authenticated? " + authentication.isAuthenticated());
+            System.out.println("Is Anonymous? " + (authentication instanceof AnonymousAuthenticationToken));
+
+        return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
+        }
+    return false;
     }
 
     public UserDto updateUserInformation(UserDto user){
