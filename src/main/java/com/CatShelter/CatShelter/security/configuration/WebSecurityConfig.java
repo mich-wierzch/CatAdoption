@@ -51,7 +51,7 @@ public class WebSecurityConfig {
                 .and()
                 .csrf().disable()
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(authWhitelist).hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(authWhitelist).permitAll()
                         .anyRequest().permitAll())
                 .authenticationManager(authenticationManager)
                 .logout();

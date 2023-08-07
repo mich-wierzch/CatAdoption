@@ -80,14 +80,10 @@ public class UserService implements UserDetailsService {
         Authentication authentication = SecurityContextHolder
                 .getContext().getAuthentication();
 
-        if (authentication != null){
-            System.out.println("Authentication Details: " + authentication);
-            System.out.println("Is Authenticated? " + authentication.isAuthenticated());
-            System.out.println("Is Anonymous? " + (authentication instanceof AnonymousAuthenticationToken));
+        if (authentication instanceof AnonymousAuthenticationToken) return false;
 
-        return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
-        }
-    return false;
+        return authentication.isAuthenticated();
+
     }
 
     public UserDto updateUserInformation(UserDto user){
