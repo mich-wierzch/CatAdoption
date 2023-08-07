@@ -38,9 +38,9 @@ public class UserController {
         return userService.isUserSessionActive();
     }
 
-    @GetMapping(path="/details")
-    public UserDto fetchUserDetails(){
-        return userService.fetchUserInformation();
+    @GetMapping(path="/details/{userId}")
+    public UserDto fetchUserDetails(@PathVariable Long userId){
+        return userService.fetchUserInformation(userId);
     }
 
 

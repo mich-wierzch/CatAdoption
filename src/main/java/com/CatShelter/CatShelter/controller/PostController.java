@@ -23,9 +23,9 @@ public class PostController {
         return postService.findAllPosts();
     }
 
-    @GetMapping(path="/getByUser")
-    public List<PostDto> getPostsByUser(){
-        return postService.findPostsByUser();
+    @GetMapping(path="/getByUser/{userId}")
+    public List<PostDto> getPostsByUser(@PathVariable Long userId){
+        return postService.findPostsByUser(userId);
     }
 
     @GetMapping(path="/getByPostId/{postId}")

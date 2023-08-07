@@ -66,13 +66,13 @@ public class UserService implements UserDetailsService {
         return registerRequest;
 
     }
-//TODO: REFACTOR FETCHING USER INFO
-    public UserDto fetchUserInformation(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()){
-            return null;
-        }
-        UserModel user = userRepository.findByEmail(authentication.getName());
+
+    public UserDto fetchUserInformation(Long userId){
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication == null || !authentication.isAuthenticated()){
+//            return null;
+//        }
+        UserModel user = userRepository.findByUserId(userId);
         return userMapper.convertUserToDto(user);
     }
 

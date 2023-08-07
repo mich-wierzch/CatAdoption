@@ -59,11 +59,8 @@ public class PostService {
                 .map(postMapper::convertToDto)
                 .collect(Collectors.toList());
     }
-//TODO: REFACTOR FETCHING POSTS BY USER
-    public List<PostDto> findPostsByUser(){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
+    public List<PostDto> findPostsByUser(Long userId){
 
         List<PostModel> posts = postRepository.findByUserUserId(userId);
         return posts.stream()
