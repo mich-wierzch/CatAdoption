@@ -23,7 +23,6 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     String login(@RequestBody LoginRequestDto loginRequest){
         userService.loginUser(loginRequest, authenticationManager);
-        return "Logged in";
     }
 
 

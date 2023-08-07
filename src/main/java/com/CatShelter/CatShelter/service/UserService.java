@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
     private final PostRepository postRepository;
     private final UserMapper userMapper;
 
-    public LoginRequestDto loginUser(LoginRequestDto loginRequest,
+    public String loginUser(LoginRequestDto loginRequest,
                                      AuthenticationManager authenticationManager){
 
         try {
@@ -43,7 +43,8 @@ public class UserService implements UserDetailsService {
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            return loginRequest;
+            System.out.println(authentication.getPrincipal());
+            return "Logged in";
         } catch (NullPointerException | AuthenticationException e){
             throw new IllegalArgumentException("Invalid Credentials");
 
