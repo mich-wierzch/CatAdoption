@@ -80,9 +80,7 @@ public class UserService implements UserDetailsService {
         Authentication authentication = SecurityContextHolder
                 .getContext().getAuthentication();
 
-        if (authentication instanceof AnonymousAuthenticationToken) return false;
-
-        return authentication.isAuthenticated();
+        return authentication != null && authentication.isAuthenticated();
 
     }
 
