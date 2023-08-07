@@ -43,10 +43,10 @@ public class UserService implements UserDetailsService {
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
             return loginRequest;
         } catch (NullPointerException | AuthenticationException e){
             throw new IllegalArgumentException("Invalid Credentials");
+
         }
     }
 
@@ -70,10 +70,7 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDto fetchUserInformation(Long userId){
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication == null || !authentication.isAuthenticated()){
-//            return null;
-//        }
+
         UserModel user = userRepository.findByUserId(userId);
         return userMapper.convertUserToDto(user);
     }
@@ -81,7 +78,7 @@ public class UserService implements UserDetailsService {
     public boolean isUserSessionActive(){
         Object user = SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
-
+        System.out.println(user);
         return user != null && !user.equals("anonymousUser");
 
     }
