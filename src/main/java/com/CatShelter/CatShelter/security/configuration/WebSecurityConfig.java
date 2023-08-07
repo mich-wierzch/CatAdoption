@@ -18,6 +18,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import static com.CatShelter.CatShelter.security.configuration.EndpointWhitelist.authWhitelist;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class WebSecurityConfig {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserService userService;
 
-    private static final String[] unauthWhitelist = EndpointWhitelist.unauthWhitelist;
+    private static final String[] unauthWhitelist = EndpointWhitelist.authWhitelist;
     AuthenticationManager authenticationManager;
 
     @Bean
@@ -50,8 +52,8 @@ public class WebSecurityConfig {
                 .and()
                 .csrf().disable()
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(unauthWhitelist).permitAll() //Allows unauthenticated access to URLs
-                        .anyRequest().permitAll()) //Require authentication for all others URLs not specified above
+                        .requestMatchers(authWhitelist).hasAnyRole("USER", "ADMIN")
+                        .anyRequest().permitAll())
                 .authenticationManager(authenticationManager)
                 .logout();
     //TODO: EDIT SECURITY IMPLEMENTATION
