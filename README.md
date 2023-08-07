@@ -21,7 +21,7 @@ Hibernate, PostgreSQL, Swagger, Lombok**
 
 ## API Documentation
 
-You can find the API documentation using Swagger. After running the application, access the Swagger UI at http://localhost:<port>/swagger-ui.html
+You can find the API documentation using Swagger. After running the application, access the Swagger UI at http://localhost:8080/swagger-ui.html
 
 
 ## How to run
