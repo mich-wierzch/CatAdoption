@@ -22,7 +22,7 @@ public class UserController {
     @PostMapping(path="/login",
             consumes = MediaType.APPLICATION_JSON_VALUE)
     String login(@RequestBody LoginRequestDto loginRequest){
-        userService.loginUser(loginRequest, authenticationManager);
+        return userService.loginUser(loginRequest, authenticationManager);
     }
 
 
