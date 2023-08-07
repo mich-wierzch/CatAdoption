@@ -23,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -61,12 +62,11 @@ public class UserService implements UserDetailsService {
                 .password(bCryptPasswordEncoder.encode(registerRequest.getPassword()))
                 .userRole(UserRole.USER)
                 .build();
-        System.out.println(userModel);
         userRepository.save(userModel);
         return registerRequest;
 
     }
-
+//TODO: REFACTOR FETCHING USER INFO
     public UserDto fetchUserInformation(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()){
@@ -84,22 +84,29 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public UserDto updateUser(UserDto user){
+    public UserDto updateUserInformation(UserDto user){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         UserModel existingUser = userRepository.findByEmail(email);
 
-        if(user.getFirstName()!=null){
-            existingUser.setFirstName(user.getFirstName());
-        }
-        if (user.getLastName()!=null){
-            existingUser.setLastName(user.getLastName());
-        }
-        if (user.getMobile()!=null){
-            existingUser.setMobile(user.getMobile());
-        }
+        existingUser.setFirstName(Optional.ofNullable(user.getFirstName()).orElse(existingUser.getFirstName()));
+        existingUser.setLastName(Optional.ofNullable(user.getLastName()).orElse(existingUser.getLastName()));
+        existingUser.setMobile(Optional.ofNullable(user.getMobile()).orElse(existingUser.getMobile()));
+
         userRepository.save(existingUser);
         return userMapper.convertUserToDto(existingUser);
+    }
+
+    public String updatePassword(String password){
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserModel existingUser = userRepository.findByEmail(email);
+
+        existingUser.setPassword(bCryptPasswordEncoder.encode(password));
+
+        return "Password updated";
+
     }
 
     public UserDto deleteUser(){

@@ -59,7 +59,7 @@ public class PostService {
                 .map(postMapper::convertToDto)
                 .collect(Collectors.toList());
     }
-
+//TODO: REFACTOR FETCHING POSTS BY USER
     public List<PostDto> findPostsByUser(){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -81,6 +81,21 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("Post with id " + postId + " not found"));
 
         postRepository.deleteById(postId);
+
+    }
+
+    public PostDto updatePost(Long postId, PostDto postDto){
+        PostModel post = postRepository.findByPostId(postId);
+
+        post.setCatName(Optional.ofNullable(postDto.getCatName()).orElse(post.getCatName()));
+        post.setCatSex(Optional.ofNullable(postDto.getCatSex()).orElse(post.getCatSex()));
+        post.setCatAge(Optional.ofNullable(postDto.getCatAge()).orElse(post.getCatAge()));
+        post.setCatBreed(Optional.ofNullable(postDto.getCatBreed()).orElse(post.getCatBreed()));
+        post.setImageFile(Optional.ofNullable(postDto.getImageFile()).orElse(post.getImageFile()));
+        post.setDescription(Optional.ofNullable(postDto.getDescription()).orElse(post.getDescription()));
+        post.setLocation(Optional.ofNullable(postDto.getLocation()).orElse(post.getLocation()));
+
+        return postMapper.convertToDto(post);
 
     }
 

@@ -3,6 +3,7 @@ package com.CatShelter.CatShelter.controller;
 import com.CatShelter.CatShelter.dto.LoginRequestDto;
 import com.CatShelter.CatShelter.dto.RegisterRequestDto;
 import com.CatShelter.CatShelter.dto.UserDto;
+import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -43,10 +44,15 @@ public class UserController {
     }
 
 
-    @PatchMapping(path="/update")
-    public UserDto updateUser(UserDto user){
-        return userService.updateUser(user);
+    @PatchMapping(path="/update/details")
+    public UserDto updateUserDetails(UserDto user){
+        return userService.updateUserInformation(user);
 
+    }
+
+    @PostMapping(path="/update/password")
+    public String updateUserPassword(@RequestParam String password){
+        return userService.updatePassword(password);
     }
 
     @DeleteMapping(path="/delete")

@@ -34,7 +34,14 @@ public class PostController {
     }
 
     @DeleteMapping(path="/delete/{postId}")
-    public void deletePost(@PathVariable Long postId){
+    public String deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
+        return "Post deleted";
+    }
+
+    @PatchMapping(path="/update/{postId}")
+    public PostDto updatePost(@PathVariable Long postId,
+                              @RequestBody PostDto postDto){
+        return postService.updatePost(postId, postDto);
     }
 }
