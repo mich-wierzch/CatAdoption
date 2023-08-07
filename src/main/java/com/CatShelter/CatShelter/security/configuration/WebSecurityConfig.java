@@ -1,6 +1,5 @@
 package com.CatShelter.CatShelter.security.configuration;
 
-import com.CatShelter.CatShelter.model.UserRole;
 import com.CatShelter.CatShelter.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +28,7 @@ public class WebSecurityConfig {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserService userService;
 
-    private static final String[] unauthWhitelist = EndpointWhitelist.authWhitelist;
+    private static final String[] authWhitelist = EndpointWhitelist.authWhitelist;
     AuthenticationManager authenticationManager;
 
     @Bean
