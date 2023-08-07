@@ -50,11 +50,7 @@ public class WebSecurityConfig {
                 .cors()
                 .and()
                 .csrf().disable()
-                .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(authWhitelist).permitAll()
-                        .anyRequest().permitAll())
                 .authenticationManager(authenticationManager)
-                .anonymous().disable()
                 .logout();
     //TODO: EDIT SECURITY IMPLEMENTATION
 
