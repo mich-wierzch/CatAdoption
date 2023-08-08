@@ -36,8 +36,8 @@ public class UserController {
     }
 
     @GetMapping(path="/session")
-    public UserModel userSession(){
-        return userService.isUserSessionActive();
+    public UserModel userSession(Principal principal){
+        return userService.isUserSessionActive(principal);
     }
 
     @GetMapping(path="/details/{userId}")

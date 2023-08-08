@@ -93,11 +93,9 @@ public class UserService implements UserDetailsService {
     }
     }
 
-    public UserModel isUserSessionActive(){
+    public UserModel isUserSessionActive(Principal principal){
         try {
-            Object user = SecurityContextHolder
-                    .getContext().getAuthentication().getPrincipal();
-            return userRepository.findByUsername((String) user);
+            return userRepository.findByUsername(principal.getName());
         } catch (NullPointerException e){
             return null;
         }
