@@ -77,7 +77,7 @@ public class PostService {
             PostModel post = postRepository.findByPostId(postId);
             return postMapper.convertToDto(post);
         } catch (NullPointerException e) {
-            throw new IllegalArgumentException("Post with id " + postId + " not found");
+            return null;
         }
     }
 
