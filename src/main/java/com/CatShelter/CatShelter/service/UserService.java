@@ -27,7 +27,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
@@ -56,8 +58,7 @@ public class UserService implements UserDetailsService {
             HttpSession session = request.getSession(true);
             session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, securityContext );
 
-            System.out.println("Logged in as" + authentication.getName());
-            return "Logged in";
+            return "Logged in as " + authentication.getName();
         } catch (NullPointerException | AuthenticationException e){
             throw new IllegalArgumentException("Invalid Credentials");
 
@@ -66,7 +67,8 @@ public class UserService implements UserDetailsService {
 
     public RegisterRequestDto addUser(RegisterRequestDto registerRequest){
 
-        if (userRepository.findByUsername(registerRequest.getUsername()).isPresent()){
+        if (userRepository.findByUsername(registerRequest.getUsername()) != null &&
+                !Objects.equals(registerRequest.getUsername(), "anonymousUser")){
             throw new IllegalStateException("Username taken");
         }
         if(userRepository.existsByEmail(registerRequest.getEmail())){
@@ -100,12 +102,10 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public UserDto updateUserInformation(UserDto user){
+    public UserDto updateUserInformation(UserDto user, Principal principal){
         try {
 
-            String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-            UserModel existingUser = userRepository.findByEmail(email);
+            UserModel existingUser = userRepository.findByUsername(principal.getName());
 
             existingUser.setFirstName(Optional.ofNullable(user.getFirstName()).orElse(existingUser.getFirstName()));
             existingUser.setLastName(Optional.ofNullable(user.getLastName()).orElse(existingUser.getLastName()));
@@ -118,13 +118,14 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public String updatePassword(String password){
+    public String updatePassword(String password, Principal principal){
     try {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        UserModel existingUser = userRepository.findByEmail(email);
+        UserModel existingUser = userRepository.findByUsername(principal.getName());
 
         existingUser.setPassword(bCryptPasswordEncoder.encode(password));
+
+        userRepository.save(existingUser);
 
         return "Password updated";
     } catch (NullPointerException e){
@@ -133,23 +134,26 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public UserDto deleteUser(){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    public UserDto deleteUser(String password, Principal principal, HttpServletRequest request){
 
-       UserModel user = userRepository.findByEmail(email);
+        UserModel user = userRepository.findByUsername(principal.getName());
+    try {
+        if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
 
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String authenticatedEmail = authentication.getName();
-
-        if(!email.equals(authenticatedEmail)){
-            throw new IllegalArgumentException("Not authorized to delete this account.");
+            List<PostModel> userPosts = postRepository.findByUserUserId(user.getUserId());
+            postRepository.deleteAll(userPosts);
+            userRepository.delete(user);
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+            return userMapper.convertUserToDto(user);
+        } else {
+            throw new IllegalArgumentException("Incorrect password!");
         }
-
-       List<PostModel> userPosts = postRepository.findByUserUserId(user.getUserId());
-       postRepository.deleteAll(userPosts);
-       userRepository.delete(user);
-       return userMapper.convertUserToDto(user);
+    } catch (NullPointerException e){
+        throw new IllegalArgumentException("User is not logged in");
+    }
     }
 
     @Override

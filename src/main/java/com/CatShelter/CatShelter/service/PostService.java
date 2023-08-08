@@ -7,11 +7,11 @@ import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -63,7 +63,7 @@ public class PostService {
                 .map(postMapper::convertToDto)
                 .collect(Collectors.toList());
     }
-
+    @Transactional
     public List<PostDto> findPostsByUser(Long userId){
 
         List<PostModel> posts = postRepository.findByUserUserId(userId);
@@ -71,7 +71,7 @@ public class PostService {
                 .map(postMapper::convertToDto)
                 .collect(Collectors.toList());
     }
-
+    @Transactional
     public PostDto findPostByPostId(Long postId){
         try {
             PostModel post = postRepository.findByPostId(postId);
@@ -88,7 +88,7 @@ public class PostService {
         postRepository.deleteById(postId);
 
     }
-
+    @Transactional
     public PostDto updatePost(Long postId, PostDto postDto){
 
         try {

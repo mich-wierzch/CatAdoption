@@ -8,7 +8,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping(path="/api/user")
@@ -44,19 +49,21 @@ public class UserController {
 
 
     @PatchMapping(path="/update/details")
-    public UserDto updateUserDetails(UserDto user){
-        return userService.updateUserInformation(user);
+    public UserDto updateUserDetails(UserDto user, Principal principal){
+        return userService.updateUserInformation(user, principal);
 
     }
 
     @PostMapping(path="/update/password")
-    public String updateUserPassword(@RequestParam String password){
-        return userService.updatePassword(password);
+    public String updateUserPassword(@RequestParam String password, Principal principal){
+        return userService.updatePassword(password, principal);
     }
 
     @DeleteMapping(path="/delete")
-    public UserDto deleteUser(){
-        return userService.deleteUser();
+    public UserDto deleteUser(@RequestParam String password, Principal principal, HttpServletRequest request){
+        return userService.deleteUser(password, principal, request);
     }
+
+
 
 }
