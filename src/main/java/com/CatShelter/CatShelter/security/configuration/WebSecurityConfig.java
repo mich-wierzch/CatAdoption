@@ -29,7 +29,6 @@ public class WebSecurityConfig {
     private final UserService userService;
 
     private static final String[] authWhitelist = EndpointWhitelist.authWhitelist;
-    AuthenticationManager authenticationManager;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
@@ -39,8 +38,9 @@ public class WebSecurityConfig {
 
 
 
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception{
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(daoAuthenticationProvider());
@@ -50,6 +50,9 @@ public class WebSecurityConfig {
                 .cors()
                 .and()
                 .csrf().disable()
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers(authWhitelist).permitAll()
+                        .anyRequest().permitAll())
                 .authenticationManager(authenticationManager)
                 .logout();
     //TODO: EDIT SECURITY IMPLEMENTATION

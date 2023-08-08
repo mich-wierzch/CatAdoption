@@ -3,8 +3,8 @@ package com.CatShelter.CatShelter.controller;
 import com.CatShelter.CatShelter.dto.LoginRequestDto;
 import com.CatShelter.CatShelter.dto.RegisterRequestDto;
 import com.CatShelter.CatShelter.dto.UserDto;
-import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,8 +21,8 @@ public class UserController {
 
     @PostMapping(path="/login",
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    String login(@RequestBody LoginRequestDto loginRequest){
-        return userService.loginUser(loginRequest, authenticationManager);
+    String login(@RequestBody LoginRequestDto loginRequest, HttpServletRequest request){
+        return userService.loginUser(loginRequest, authenticationManager, request);
     }
 
 

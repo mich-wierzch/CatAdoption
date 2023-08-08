@@ -7,6 +7,7 @@ import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,7 +27,7 @@ public class PostService {
     private final PostMapper postMapper;
 
     public PostDto createPost(PostDto request){
-
+    try {
         Authentication authentication = SecurityContextHolder
                 .getContext().getAuthentication();
         Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
@@ -51,6 +52,9 @@ public class PostService {
                 .build();
         postRepository.save(postModel);
         return request;
+    } catch (ClassCastException e) {
+        throw new IllegalArgumentException("Error occured while creating the post");
+    }
     }
 
     public List<PostDto> findAllPosts(){
@@ -69,8 +73,12 @@ public class PostService {
     }
 
     public PostDto findPostByPostId(Long postId){
-        PostModel post = postRepository.findByPostId(postId);
-        return postMapper.convertToDto(post);
+        try {
+            PostModel post = postRepository.findByPostId(postId);
+            return postMapper.convertToDto(post);
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("Post with id " + postId + " not found");
+        }
     }
 
     public void deletePost(Long postId){
@@ -82,17 +90,22 @@ public class PostService {
     }
 
     public PostDto updatePost(Long postId, PostDto postDto){
-        PostModel post = postRepository.findByPostId(postId);
 
-        post.setCatName(Optional.ofNullable(postDto.getCatName()).orElse(post.getCatName()));
-        post.setCatSex(Optional.ofNullable(postDto.getCatSex()).orElse(post.getCatSex()));
-        post.setCatAge(Optional.ofNullable(postDto.getCatAge()).orElse(post.getCatAge()));
-        post.setCatBreed(Optional.ofNullable(postDto.getCatBreed()).orElse(post.getCatBreed()));
-        post.setImageFile(Optional.ofNullable(postDto.getImageFile()).orElse(post.getImageFile()));
-        post.setDescription(Optional.ofNullable(postDto.getDescription()).orElse(post.getDescription()));
-        post.setLocation(Optional.ofNullable(postDto.getLocation()).orElse(post.getLocation()));
+        try {
+            PostModel post = postRepository.findByPostId(postId);
 
-        return postMapper.convertToDto(post);
+            post.setCatName(Optional.ofNullable(postDto.getCatName()).orElse(post.getCatName()));
+            post.setCatSex(Optional.ofNullable(postDto.getCatSex()).orElse(post.getCatSex()));
+            post.setCatAge(Optional.ofNullable(postDto.getCatAge()).orElse(post.getCatAge()));
+            post.setCatBreed(Optional.ofNullable(postDto.getCatBreed()).orElse(post.getCatBreed()));
+            post.setImageFile(Optional.ofNullable(postDto.getImageFile()).orElse(post.getImageFile()));
+            post.setDescription(Optional.ofNullable(postDto.getDescription()).orElse(post.getDescription()));
+            post.setLocation(Optional.ofNullable(postDto.getLocation()).orElse(post.getLocation()));
+
+            return postMapper.convertToDto(post);
+        } catch (NullPointerException e){
+            throw new IllegalArgumentException("No post with id" + postId + " found");
+        }
 
     }
 

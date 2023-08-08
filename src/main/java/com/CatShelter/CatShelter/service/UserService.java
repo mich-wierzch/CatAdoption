@@ -9,6 +9,9 @@ import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.model.UserRole;
 import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,6 +30,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
+
 @Service
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
@@ -35,15 +41,22 @@ public class UserService implements UserDetailsService {
     private final PostRepository postRepository;
     private final UserMapper userMapper;
 
+
     public String loginUser(LoginRequestDto loginRequest,
-                                     AuthenticationManager authenticationManager){
+                            AuthenticationManager authenticationManager, HttpServletRequest request){
 
         try {
-            Authentication authentication = authenticationManager.authenticate(
+            final Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
             );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            System.out.println(authentication.getPrincipal());
+
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            securityContext.setAuthentication(authentication);
+
+            HttpSession session = request.getSession(true);
+            session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, securityContext );
+
+            System.out.println("Logged in as" + authentication.getName());
             return "Logged in";
         } catch (NullPointerException | AuthenticationException e){
             throw new IllegalArgumentException("Invalid Credentials");
@@ -71,9 +84,12 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDto fetchUserInformation(Long userId){
-
+    try {
         UserModel user = userRepository.findByUserId(userId);
         return userMapper.convertUserToDto(user);
+    } catch (NullPointerException e) {
+        throw new IllegalArgumentException("User with id " + userId + " not found");
+    }
     }
 
     public boolean isUserSessionActive(){
@@ -85,20 +101,25 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDto updateUserInformation(UserDto user){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        try {
 
-        UserModel existingUser = userRepository.findByEmail(email);
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        existingUser.setFirstName(Optional.ofNullable(user.getFirstName()).orElse(existingUser.getFirstName()));
-        existingUser.setLastName(Optional.ofNullable(user.getLastName()).orElse(existingUser.getLastName()));
-        existingUser.setMobile(Optional.ofNullable(user.getMobile()).orElse(existingUser.getMobile()));
+            UserModel existingUser = userRepository.findByEmail(email);
 
-        userRepository.save(existingUser);
-        return userMapper.convertUserToDto(existingUser);
+            existingUser.setFirstName(Optional.ofNullable(user.getFirstName()).orElse(existingUser.getFirstName()));
+            existingUser.setLastName(Optional.ofNullable(user.getLastName()).orElse(existingUser.getLastName()));
+            existingUser.setMobile(Optional.ofNullable(user.getMobile()).orElse(existingUser.getMobile()));
+
+            userRepository.save(existingUser);
+            return userMapper.convertUserToDto(existingUser);
+        } catch (NullPointerException e){
+            throw new IllegalArgumentException("User not found");
+        }
     }
 
     public String updatePassword(String password){
-
+    try {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         UserModel existingUser = userRepository.findByEmail(email);
@@ -106,6 +127,9 @@ public class UserService implements UserDetailsService {
         existingUser.setPassword(bCryptPasswordEncoder.encode(password));
 
         return "Password updated";
+    } catch (NullPointerException e){
+        throw new IllegalArgumentException("User not found");
+    }
 
     }
 
