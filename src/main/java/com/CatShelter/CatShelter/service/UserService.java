@@ -11,6 +11,7 @@ import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -92,11 +93,14 @@ public class UserService implements UserDetailsService {
     }
     }
 
-    public boolean isUserSessionActive(){
-        Object user = SecurityContextHolder
-                .getContext().getAuthentication().getPrincipal();
-        System.out.println(user);
-        return user != null && !user.equals("anonymousUser");
+    public UserModel isUserSessionActive(){
+        try {
+            Object user = SecurityContextHolder
+                    .getContext().getAuthentication().getPrincipal();
+            return userRepository.findByUsername((String) user);
+        } catch (NullPointerException e){
+            throw new IllegalArgumentException("User not found");
+        }
 
     }
 

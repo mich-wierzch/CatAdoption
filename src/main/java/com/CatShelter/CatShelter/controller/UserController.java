@@ -3,6 +3,7 @@ package com.CatShelter.CatShelter.controller;
 import com.CatShelter.CatShelter.dto.LoginRequestDto;
 import com.CatShelter.CatShelter.dto.RegisterRequestDto;
 import com.CatShelter.CatShelter.dto.UserDto;
+import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class UserController {
     }
 
     @GetMapping(path="/session")
-    public boolean isLoggedIn(){
+    public UserModel userSession(){
         return userService.isUserSessionActive();
     }
 
