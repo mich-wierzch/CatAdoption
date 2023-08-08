@@ -12,6 +12,7 @@ import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -54,7 +55,7 @@ public class UserService implements UserDetailsService {
 
             HttpSession session = request.getSession(true);
             session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, securityContext );
-
+            System.out.println(authentication.getName());
             return "Logged in as " + authentication.getName();
         } catch (NullPointerException | AuthenticationException e){
             throw new IllegalArgumentException("Invalid Credentials");

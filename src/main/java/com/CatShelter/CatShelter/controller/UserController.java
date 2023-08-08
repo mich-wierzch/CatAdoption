@@ -20,7 +20,7 @@ public class UserController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
 
-
+    @CrossOrigin
     @PostMapping(path="/login",
             consumes = MediaType.APPLICATION_JSON_VALUE)
     String login(@RequestBody LoginRequestDto loginRequest, HttpServletRequest request){
