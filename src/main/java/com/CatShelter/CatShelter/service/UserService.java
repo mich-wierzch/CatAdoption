@@ -99,7 +99,7 @@ public class UserService implements UserDetailsService {
                     .getContext().getAuthentication().getPrincipal();
             return userRepository.findByUsername((String) user);
         } catch (NullPointerException e){
-            throw new IllegalArgumentException("User not found");
+            return null;
         }
 
     }
