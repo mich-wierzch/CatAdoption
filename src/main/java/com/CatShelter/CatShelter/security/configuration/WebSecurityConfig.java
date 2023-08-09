@@ -1,6 +1,7 @@
 package com.CatShelter.CatShelter.security.configuration;
 
 import com.CatShelter.CatShelter.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,7 +57,10 @@ public class WebSecurityConfig {
                 .authenticationManager(authenticationManager)
                 .anonymous().disable()
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> {
+                            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+                        })
                                 .permitAll());
     //TODO: EDIT SECURITY IMPLEMENTATION
 
