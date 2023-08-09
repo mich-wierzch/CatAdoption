@@ -13,10 +13,10 @@ import java.util.Collections;
 @Entity
 @Table(
         name="Users",
-        uniqueConstraints = @UniqueConstraint(
-                name="email_unique",
-                columnNames = "email"
-        )
+        uniqueConstraints = {
+                @UniqueConstraint(name = "email_unique", columnNames = "email"),
+                @UniqueConstraint(name = "username_unique", columnNames = "username")
+        }
 
 )
 @Data

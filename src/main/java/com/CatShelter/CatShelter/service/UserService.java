@@ -3,7 +3,9 @@ package com.CatShelter.CatShelter.service;
 import com.CatShelter.CatShelter.dto.LoginRequestDto;
 import com.CatShelter.CatShelter.dto.RegisterRequestDto;
 import com.CatShelter.CatShelter.dto.UserDto;
+import com.CatShelter.CatShelter.dto.UserSessionDto;
 import com.CatShelter.CatShelter.mapper.UserMapper;
+import com.CatShelter.CatShelter.mapper.UserSessionMapper;
 import com.CatShelter.CatShelter.model.PostModel;
 import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.model.UserRole;
@@ -41,6 +43,7 @@ public class UserService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final PostRepository postRepository;
     private final UserMapper userMapper;
+    private final UserSessionMapper userSessionMapper;
 
 
     public String loginUser(LoginRequestDto loginRequest,
@@ -93,9 +96,10 @@ public class UserService implements UserDetailsService {
     }
     }
 
-    public UserModel isUserSessionActive(Principal principal){
+    public UserSessionDto isUserSessionActive(Principal principal){
         try {
-            return userRepository.findByUsername(principal.getName());
+            UserModel user = userRepository.findByUsername(principal.getName());
+            return userSessionMapper.convertUserSessionToDto(user);
         } catch (NullPointerException e){
             return null;
         }

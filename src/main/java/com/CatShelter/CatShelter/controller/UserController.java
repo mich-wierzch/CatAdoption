@@ -3,6 +3,7 @@ package com.CatShelter.CatShelter.controller;
 import com.CatShelter.CatShelter.dto.LoginRequestDto;
 import com.CatShelter.CatShelter.dto.RegisterRequestDto;
 import com.CatShelter.CatShelter.dto.UserDto;
+import com.CatShelter.CatShelter.dto.UserSessionDto;
 import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping(path="/session")
-    public UserModel userSession(Principal principal){
+    public UserSessionDto userSession(Principal principal){
         return userService.isUserSessionActive(principal);
     }
 
