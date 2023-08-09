@@ -54,8 +54,9 @@ public class WebSecurityConfig {
                         .requestMatchers(authWhitelist).permitAll()
                         .anyRequest().permitAll())
                 .authenticationManager(authenticationManager)
+                .anonymous().disable()
                 .logout(logout -> logout
-                        .logoutSuccessUrl("")
+                        .logoutSuccessUrl("/")
                                 .permitAll());
     //TODO: EDIT SECURITY IMPLEMENTATION
 
