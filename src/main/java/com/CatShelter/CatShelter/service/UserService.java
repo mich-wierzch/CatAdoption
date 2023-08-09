@@ -9,11 +9,16 @@ import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.model.UserRole;
 import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,7 +26,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 @Service
 @AllArgsConstructor
@@ -32,23 +42,32 @@ public class UserService implements UserDetailsService {
     private final PostRepository postRepository;
     private final UserMapper userMapper;
 
-    public LoginRequestDto loginUser(LoginRequestDto loginRequest,
-                                     AuthenticationManager authenticationManager){
+
+    public String loginUser(LoginRequestDto loginRequest,
+                            AuthenticationManager authenticationManager, HttpServletRequest request){
 
         try {
-            Authentication authentication = authenticationManager.authenticate(
+            final Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
             );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            return loginRequest;
+
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            securityContext.setAuthentication(authentication);
+
+            HttpSession session = request.getSession(true);
+            session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, securityContext );
+            System.out.println(authentication.getName());
+            return "Logged in as " + authentication.getName();
         } catch (NullPointerException | AuthenticationException e){
             throw new IllegalArgumentException("Invalid Credentials");
+
         }
     }
 
     public RegisterRequestDto addUser(RegisterRequestDto registerRequest){
 
-        if (userRepository.findByUsername(registerRequest.getUsername()).isPresent()){
+        if (userRepository.findByUsername(registerRequest.getUsername()) != null &&
+                !Objects.equals(registerRequest.getUsername(), "anonymousUser")){
             throw new IllegalStateException("Username taken");
         }
         if(userRepository.existsByEmail(registerRequest.getEmail())){
@@ -60,62 +79,81 @@ public class UserService implements UserDetailsService {
                 .password(bCryptPasswordEncoder.encode(registerRequest.getPassword()))
                 .userRole(UserRole.USER)
                 .build();
-        System.out.println(userModel);
         userRepository.save(userModel);
         return registerRequest;
 
     }
 
-    public UserDto fetchUserInformation(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()){
+    public UserDto fetchUserInformation(Long userId){
+    try {
+        UserModel user = userRepository.findByUserId(userId);
+        return userMapper.convertUserToDto(user);
+    } catch (NullPointerException e) {
+        throw new IllegalArgumentException("User with id " + userId + " not found");
+    }
+    }
+
+    public UserModel isUserSessionActive(Principal principal){
+        try {
+            return userRepository.findByUsername(principal.getName());
+        } catch (NullPointerException e){
             return null;
         }
-        UserModel user = userRepository.findByEmail(authentication.getName());
-        return userMapper.convertUserToDto(user);
+
     }
 
-    public boolean isUserSessionActive(){
-        Authentication authentication = SecurityContextHolder
-                .getContext().getAuthentication();
-        return authentication != null && authentication.isAuthenticated();
+    public UserDto updateUserInformation(UserDto user, Principal principal){
+        try {
+
+            UserModel existingUser = userRepository.findByUsername(principal.getName());
+
+            existingUser.setFirstName(Optional.ofNullable(user.getFirstName()).orElse(existingUser.getFirstName()));
+            existingUser.setLastName(Optional.ofNullable(user.getLastName()).orElse(existingUser.getLastName()));
+            existingUser.setMobile(Optional.ofNullable(user.getMobile()).orElse(existingUser.getMobile()));
+
+            userRepository.save(existingUser);
+            return userMapper.convertUserToDto(existingUser);
+        } catch (NullPointerException e){
+            throw new IllegalArgumentException("User not found");
+        }
     }
 
-    public UserDto updateUser(UserDto user){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    public String updatePassword(String password, Principal principal){
+    try {
 
-        UserModel existingUser = userRepository.findByEmail(email);
+        UserModel existingUser = userRepository.findByUsername(principal.getName());
 
-        if(user.getFirstName()!=null){
-            existingUser.setFirstName(user.getFirstName());
-        }
-        if (user.getLastName()!=null){
-            existingUser.setLastName(user.getLastName());
-        }
-        if (user.getMobile()!=null){
-            existingUser.setMobile(user.getMobile());
-        }
+        existingUser.setPassword(bCryptPasswordEncoder.encode(password));
+
         userRepository.save(existingUser);
-        return userMapper.convertUserToDto(existingUser);
+
+        return "Password updated";
+    } catch (NullPointerException e){
+        throw new IllegalArgumentException("User not found");
     }
 
-    public UserDto deleteUser(){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    }
 
-       UserModel user = userRepository.findByEmail(email);
+    public UserDto deleteUser(String password, Principal principal, HttpServletRequest request){
 
+        UserModel user = userRepository.findByUsername(principal.getName());
+    try {
+        if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String authenticatedEmail = authentication.getName();
-
-        if(!email.equals(authenticatedEmail)){
-            throw new IllegalArgumentException("Not authorized to delete this account.");
+            List<PostModel> userPosts = postRepository.findByUserUserId(user.getUserId());
+            postRepository.deleteAll(userPosts);
+            userRepository.delete(user);
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+            return userMapper.convertUserToDto(user);
+        } else {
+            throw new IllegalArgumentException("Incorrect password!");
         }
-
-       List<PostModel> userPosts = postRepository.findByUserUserId(user.getUserId());
-       postRepository.deleteAll(userPosts);
-       userRepository.delete(user);
-       return userMapper.convertUserToDto(user);
+    } catch (NullPointerException e){
+        throw new IllegalArgumentException("User is not logged in");
+    }
     }
 
     @Override

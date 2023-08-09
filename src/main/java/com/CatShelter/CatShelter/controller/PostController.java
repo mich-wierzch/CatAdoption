@@ -23,9 +23,9 @@ public class PostController {
         return postService.findAllPosts();
     }
 
-    @GetMapping(path="/getByUser")
-    public List<PostDto> getPostsByUser(){
-        return postService.findPostsByUser();
+    @GetMapping(path="/getByUser/{userId}")
+    public List<PostDto> getPostsByUser(@PathVariable Long userId){
+        return postService.findPostsByUser(userId);
     }
 
     @GetMapping(path="/getByPostId/{postId}")
@@ -34,7 +34,14 @@ public class PostController {
     }
 
     @DeleteMapping(path="/delete/{postId}")
-    public void deletePost(@PathVariable Long postId){
+    public String deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
+        return "Post deleted";
+    }
+
+    @PatchMapping(path="/update/{postId}")
+    public PostDto updatePost(@PathVariable Long postId,
+                              @RequestBody PostDto postDto){
+        return postService.updatePost(postId, postDto);
     }
 }

@@ -1,6 +1,5 @@
 package com.CatShelter.CatShelter.security.configuration;
 
-import com.CatShelter.CatShelter.model.UserRole;
 import com.CatShelter.CatShelter.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +17,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -27,8 +28,7 @@ public class WebSecurityConfig {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserService userService;
 
-    private static final String[] unauthWhitelist = EndpointWhitelist.unauthWhitelist;
-    AuthenticationManager authenticationManager;
+    private static final String[] authWhitelist = EndpointWhitelist.authWhitelist;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
@@ -38,8 +38,9 @@ public class WebSecurityConfig {
 
 
 
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception{
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(daoAuthenticationProvider());
@@ -50,8 +51,8 @@ public class WebSecurityConfig {
                 .and()
                 .csrf().disable()
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(unauthWhitelist).permitAll() //Allows unauthenticated access to URLs
-                        .anyRequest().permitAll()) //Require authentication for all others URLs not specified above
+                        .requestMatchers(authWhitelist).permitAll()
+                        .anyRequest().permitAll())
                 .authenticationManager(authenticationManager)
                 .logout();
     //TODO: EDIT SECURITY IMPLEMENTATION
@@ -74,13 +75,14 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*"); // Set the allowed origin(s) here. "*" allows all origins.
+        configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedMethod("GET");
         configuration.addAllowedMethod("POST");
         configuration.addAllowedMethod("PUT");
         configuration.addAllowedMethod("DELETE");
         configuration.addAllowedMethod("PATCH");
-        configuration.addAllowedHeader("*"); // Allow all headers.
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
