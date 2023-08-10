@@ -28,18 +28,15 @@ public class PostModel {
             generator = "post_sequence"
     )
     private Long postId;
-    private String catName;
-    private String catSex;
-    private Integer catAge;
-    private String catBreed;
+    private String name;
+    private String gender;
+    private Integer age;
+    private String breed;
     @Lob
     private String imageFile;
     private String description;
     private String location;
     private LocalDate createdAt;
-    private String userFirstName;
-    private String userLastName;
-    private String userMobilePhone;
     @ManyToOne
     @JoinColumn(
             name = "user_id",

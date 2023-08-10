@@ -8,17 +8,18 @@ import org.springframework.stereotype.Component;
 public class PostMapper {
     public PostDto convertToDto(PostModel postModel){
         return PostDto.builder()
-                .catName(postModel.getCatName())
-                .catSex(postModel.getCatSex())
-                .catAge(postModel.getCatAge())
-                .catBreed(postModel.getCatBreed())
+                .name(postModel.getName())
+                .gender(postModel.getGender())
+                .age(postModel.getAge())
+                .breed(postModel.getBreed())
                 .imageFile(postModel.getImageFile())
                 .description(postModel.getDescription())
                 .location(postModel.getLocation())
                 .createdAt(postModel.getCreatedAt())
-                .userFirstName(postModel.getUserFirstName())
-                .userLastName(postModel.getUserLastName())
-                .userMobilePhone(postModel.getUserMobilePhone())
+                .userFirstName(postModel.getUser().getFirstName())
+                .userLastName(postModel.getUser().getLastName())
+                .userMobilePhone(postModel.getUser().getMobile())
+                .userId(postModel.getUser().getUserId())
                 .build();
     }
 }

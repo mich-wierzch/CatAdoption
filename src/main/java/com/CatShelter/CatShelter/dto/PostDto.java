@@ -12,10 +12,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class PostDto {
-    private String catName;
-    private String catSex;
-    private Integer catAge;
-    private String catBreed;
+    private String name;
+    private String gender;
+    private Integer age;
+    private String breed;
     private String imageFile;
     private String description;
     private String location;
@@ -23,4 +23,5 @@ public class PostDto {
     private String userFirstName;
     private String userLastName;
     private String userMobilePhone;
+    private Long userId;
 }
