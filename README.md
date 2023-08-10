@@ -19,9 +19,56 @@ Hibernate, PostgreSQL, Swagger, Lombok**
 - Update User Profile: Users can update their profile information.
 - Delete User Account: Authenticated users can delete their account. Deleting an account will remove all associated cat posts.
 
+
 ## API Documentation
 
-You can find the API documentation using Swagger. After running the application, access the Swagger UI at http://localhost:8080/swagger-ui.html
+You can find all available endpoints using Swagger. After running the application, access the Swagger UI at http://localhost:8080/swagger-ui.html
+
+**Post Controller**
+
+```bash
+    /api/posts/add - Add a new post. User most be logged in.
+```
+```bash
+    /api/posts/getAll - Fetch all posts from the database
+```
+```bash
+    /api/posts/getByUser/{userId} - Fetch posts that belong to particular user
+```
+```bash
+    /api/posts/getByPostId - Fetch post by it's post id
+```
+```bash
+    /api/posts/delete/{postId} - Delete post by it's post id
+```
+```bash
+    /api/posts/update/{postId} - Update post by it's post id
+```
+
+**User Controller**
+
+```bash
+    /api/user/login - Login to the application
+```
+```bash
+    /api/user/register - Register new account
+```
+```bash
+    /api/user/session - Returns information about active user session
+```
+```bash
+    /api/user/details/{userId} - Fetch details of given user
+```
+```bash
+    /api/user/update/details - Update certain details for currently active user
+```
+```bash
+    /api/user/update/password - Update password for currently logged in user
+```
+```bash
+    /api/user/delete - Delete an user. User must be authorized first to delete the account.
+```
+
 
 
 ## How to run
