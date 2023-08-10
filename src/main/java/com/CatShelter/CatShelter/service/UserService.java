@@ -13,9 +13,7 @@ import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,7 +26,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -98,13 +95,7 @@ public class UserService implements UserDetailsService {
 
     public UserSessionDto isUserSessionActive(){
         try {
-
-            Authentication authentication = SecurityContextHolder
-                    .getContext().getAuthentication();
-            Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
-
-
-            UserModel user = userRepository.findByUserId(userId);
+            UserModel user = userRepository.findByUserId(getCurrentUserId());
             return userSessionMapper.convertUserSessionToDto(user);
         } catch (NullPointerException e){
             return null;
@@ -114,11 +105,8 @@ public class UserService implements UserDetailsService {
 
     public UserDto updateUserInformation(UserDto user){
         try {
-            Authentication authentication = SecurityContextHolder
-                    .getContext().getAuthentication();
-            Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
 
-            UserModel existingUser = userRepository.findByUserId(userId);
+            UserModel existingUser = userRepository.findByUserId(getCurrentUserId());
 
             existingUser.setUsername(Optional.ofNullable(user.getUsername()).orElse(existingUser.getUsername()));
             existingUser.setFirstName(Optional.ofNullable(user.getFirstName()).orElse(existingUser.getFirstName()));
@@ -135,11 +123,7 @@ public class UserService implements UserDetailsService {
     public String updatePassword(String password){
     try {
 
-        Authentication authentication = SecurityContextHolder
-                .getContext().getAuthentication();
-        Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
-
-        UserModel existingUser = userRepository.findByUserId(userId);
+        UserModel existingUser = userRepository.findByUserId(getCurrentUserId());
 
         existingUser.setPassword(bCryptPasswordEncoder.encode(password));
 
@@ -152,11 +136,9 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public UserDto deleteUser(String password, Principal principal, HttpServletRequest request){
+    public UserDto deleteUser(String password,HttpServletRequest request){
 
-        Authentication authentication = SecurityContextHolder
-                .getContext().getAuthentication();
-        Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
+        Long userId = getCurrentUserId();
 
         UserModel user = userRepository.findByUserId(userId);
     try {
@@ -178,6 +160,15 @@ public class UserService implements UserDetailsService {
     }
     }
 
+    public Authentication getCurrentAuthentication(){
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    public Long getCurrentUserId(){
+        Authentication authentication = getCurrentAuthentication();
+        return ((UserModel) authentication.getPrincipal()).getUserId();
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
@@ -188,4 +179,6 @@ public class UserService implements UserDetailsService {
         }
 
     }
+
+
 }

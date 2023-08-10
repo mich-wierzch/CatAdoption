@@ -58,8 +58,8 @@ public class UserController {
     }
 
     @DeleteMapping(path="/delete")
-    public UserDto deleteUser(@RequestParam String password, Principal principal, HttpServletRequest request){
-        return userService.deleteUser(password, principal, request);
+    public UserDto deleteUser(@RequestParam String password,HttpServletRequest request){
+        return userService.deleteUser(password,request);
     }
 
 
