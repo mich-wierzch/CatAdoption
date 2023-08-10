@@ -96,9 +96,15 @@ public class UserService implements UserDetailsService {
     }
     }
 
-    public UserSessionDto isUserSessionActive(Principal principal){
+    public UserSessionDto isUserSessionActive(){
         try {
-            UserModel user = userRepository.findByUsername(principal.getName());
+
+            Authentication authentication = SecurityContextHolder
+                    .getContext().getAuthentication();
+            Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
+
+
+            UserModel user = userRepository.findByUserId(userId);
             return userSessionMapper.convertUserSessionToDto(user);
         } catch (NullPointerException e){
             return null;
@@ -106,11 +112,15 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public UserDto updateUserInformation(UserDto user, Principal principal){
+    public UserDto updateUserInformation(UserDto user){
         try {
+            Authentication authentication = SecurityContextHolder
+                    .getContext().getAuthentication();
+            Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
 
-            UserModel existingUser = userRepository.findByUsername(principal.getName());
+            UserModel existingUser = userRepository.findByUserId(userId);
 
+            existingUser.setUsername(Optional.ofNullable(user.getUsername()).orElse(existingUser.getUsername()));
             existingUser.setFirstName(Optional.ofNullable(user.getFirstName()).orElse(existingUser.getFirstName()));
             existingUser.setLastName(Optional.ofNullable(user.getLastName()).orElse(existingUser.getLastName()));
             existingUser.setMobile(Optional.ofNullable(user.getMobile()).orElse(existingUser.getMobile()));
@@ -122,10 +132,14 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public String updatePassword(String password, Principal principal){
+    public String updatePassword(String password){
     try {
 
-        UserModel existingUser = userRepository.findByUsername(principal.getName());
+        Authentication authentication = SecurityContextHolder
+                .getContext().getAuthentication();
+        Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
+
+        UserModel existingUser = userRepository.findByUserId(userId);
 
         existingUser.setPassword(bCryptPasswordEncoder.encode(password));
 
@@ -140,11 +154,15 @@ public class UserService implements UserDetailsService {
 
     public UserDto deleteUser(String password, Principal principal, HttpServletRequest request){
 
-        UserModel user = userRepository.findByUsername(principal.getName());
+        Authentication authentication = SecurityContextHolder
+                .getContext().getAuthentication();
+        Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
+
+        UserModel user = userRepository.findByUserId(userId);
     try {
         if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
 
-            List<PostModel> userPosts = postRepository.findByUserUserId(user.getUserId());
+            List<PostModel> userPosts = postRepository.findByUserUserId(userId);
             postRepository.deleteAll(userPosts);
             userRepository.delete(user);
             HttpSession session = request.getSession(false);

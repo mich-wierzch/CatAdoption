@@ -12,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -53,8 +52,8 @@ public class PostService {
                 .build();
         postRepository.save(postModel);
         return request;
-    } catch (ClassCastException e) {
-        throw new IllegalArgumentException("Error occured while creating the post");
+    } catch (NullPointerException e) {
+        throw new IllegalArgumentException("No user logged in");
     }
     }
 

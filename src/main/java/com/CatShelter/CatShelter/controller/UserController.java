@@ -4,7 +4,6 @@ import com.CatShelter.CatShelter.dto.LoginRequestDto;
 import com.CatShelter.CatShelter.dto.RegisterRequestDto;
 import com.CatShelter.CatShelter.dto.UserDto;
 import com.CatShelter.CatShelter.dto.UserSessionDto;
-import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +36,8 @@ public class UserController {
     }
 
     @GetMapping(path="/session")
-    public UserSessionDto userSession(Principal principal){
-        return userService.isUserSessionActive(principal);
+    public UserSessionDto userSession(){
+        return userService.isUserSessionActive();
     }
 
     @GetMapping(path="/details/{userId}")
@@ -48,14 +47,14 @@ public class UserController {
 
 
     @PatchMapping(path="/update/details")
-    public UserDto updateUserDetails(UserDto user, Principal principal){
-        return userService.updateUserInformation(user, principal);
+    public UserDto updateUserDetails(UserDto user){
+        return userService.updateUserInformation(user);
 
     }
 
     @PostMapping(path="/update/password")
-    public String updateUserPassword(@RequestParam String password, Principal principal){
-        return userService.updatePassword(password, principal);
+    public String updateUserPassword(@RequestParam String password){
+        return userService.updatePassword(password);
     }
 
     @DeleteMapping(path="/delete")
