@@ -3,7 +3,9 @@ package com.CatShelter.CatShelter.service;
 import com.CatShelter.CatShelter.dto.LoginRequestDto;
 import com.CatShelter.CatShelter.dto.RegisterRequestDto;
 import com.CatShelter.CatShelter.dto.UserDto;
+import com.CatShelter.CatShelter.dto.UserSessionDto;
 import com.CatShelter.CatShelter.mapper.UserMapper;
+import com.CatShelter.CatShelter.mapper.UserSessionMapper;
 import com.CatShelter.CatShelter.model.PostModel;
 import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.model.UserRole;
@@ -11,9 +13,7 @@ import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,7 +26,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,6 +40,7 @@ public class UserService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final PostRepository postRepository;
     private final UserMapper userMapper;
+    private final UserSessionMapper userSessionMapper;
 
 
     public String loginUser(LoginRequestDto loginRequest,
@@ -93,20 +93,27 @@ public class UserService implements UserDetailsService {
     }
     }
 
-    public UserModel isUserSessionActive(Principal principal){
+    public UserSessionDto isUserSessionActive(){
         try {
-            return userRepository.findByUsername(principal.getName());
+            UserModel user = userRepository.findByUserId(getCurrentUserId());
+            return userSessionMapper.convertUserSessionToDto(user);
         } catch (NullPointerException e){
             return null;
         }
 
     }
 
-    public UserDto updateUserInformation(UserDto user, Principal principal){
+    public UserDto updateUserInformation(UserDto user){
         try {
 
-            UserModel existingUser = userRepository.findByUsername(principal.getName());
+            UserModel existingUser = userRepository.findByUserId(getCurrentUserId());
 
+            boolean usernameExists = userRepository.existsByUsername(user.getUsername());
+            if (!usernameExists) {
+                existingUser.setUsername(Optional.ofNullable(user.getUsername()).orElse(existingUser.getUsername()));
+            } else {
+                throw new IllegalArgumentException("Username already taken!");
+            }
             existingUser.setFirstName(Optional.ofNullable(user.getFirstName()).orElse(existingUser.getFirstName()));
             existingUser.setLastName(Optional.ofNullable(user.getLastName()).orElse(existingUser.getLastName()));
             existingUser.setMobile(Optional.ofNullable(user.getMobile()).orElse(existingUser.getMobile()));
@@ -118,10 +125,10 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public String updatePassword(String password, Principal principal){
+    public String updatePassword(String password){
     try {
 
-        UserModel existingUser = userRepository.findByUsername(principal.getName());
+        UserModel existingUser = userRepository.findByUserId(getCurrentUserId());
 
         existingUser.setPassword(bCryptPasswordEncoder.encode(password));
 
@@ -134,13 +141,15 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public UserDto deleteUser(String password, Principal principal, HttpServletRequest request){
+    public UserDto deleteUser(String password,HttpServletRequest request){
 
-        UserModel user = userRepository.findByUsername(principal.getName());
+        Long userId = getCurrentUserId();
+
+        UserModel user = userRepository.findByUserId(userId);
     try {
         if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
 
-            List<PostModel> userPosts = postRepository.findByUserUserId(user.getUserId());
+            List<PostModel> userPosts = postRepository.findByUserUserId(userId);
             postRepository.deleteAll(userPosts);
             userRepository.delete(user);
             HttpSession session = request.getSession(false);
@@ -156,6 +165,15 @@ public class UserService implements UserDetailsService {
     }
     }
 
+    public Authentication getCurrentAuthentication(){
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    public Long getCurrentUserId(){
+        Authentication authentication = getCurrentAuthentication();
+        return ((UserModel) authentication.getPrincipal()).getUserId();
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
@@ -166,4 +184,6 @@ public class UserService implements UserDetailsService {
         }
 
     }
+
+
 }

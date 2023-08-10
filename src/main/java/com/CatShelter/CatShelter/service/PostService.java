@@ -28,9 +28,8 @@ public class PostService {
 
     public PostDto createPost(PostDto request){
     try {
-        Authentication authentication = SecurityContextHolder
-                .getContext().getAuthentication();
-        Long userId = ((UserModel) authentication.getPrincipal()).getUserId();
+
+        Long userId = getCurrentUserId();
 
         UserModel userModel = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
@@ -52,8 +51,8 @@ public class PostService {
                 .build();
         postRepository.save(postModel);
         return request;
-    } catch (ClassCastException e) {
-        throw new IllegalArgumentException("Error occured while creating the post");
+    } catch (NullPointerException e) {
+        throw new IllegalArgumentException("No user logged in");
     }
     }
 
@@ -107,6 +106,14 @@ public class PostService {
             throw new IllegalArgumentException("No post with id" + postId + " found");
         }
 
+    }
+    public Authentication getCurrentAuthentication(){
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    public Long getCurrentUserId(){
+        Authentication authentication = getCurrentAuthentication();
+        return ((UserModel) authentication.getPrincipal()).getUserId();
     }
 
 

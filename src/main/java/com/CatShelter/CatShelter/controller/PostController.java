@@ -4,6 +4,7 @@ import com.CatShelter.CatShelter.dto.PostDto;
 import com.CatShelter.CatShelter.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 @RequestMapping(path="/api/posts")
@@ -31,6 +32,10 @@ public class PostController {
     @GetMapping(path="/getByPostId/{postId}")
     public PostDto getPostByPostId(@PathVariable Long postId){
         return postService.findPostByPostId(postId);
+    }
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public PostDto handleTypeMismatchException(){
+        return null;
     }
 
     @DeleteMapping(path="/delete/{postId}")
