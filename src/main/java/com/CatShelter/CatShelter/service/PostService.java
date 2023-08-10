@@ -1,5 +1,6 @@
 package com.CatShelter.CatShelter.service;
 
+import com.CatShelter.CatShelter.dto.CreatePostDto;
 import com.CatShelter.CatShelter.dto.PostDto;
 import com.CatShelter.CatShelter.mapper.PostMapper;
 import com.CatShelter.CatShelter.model.PostModel;
@@ -26,7 +27,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostMapper postMapper;
 
-    public PostDto createPost(PostDto request){
+    public CreatePostDto createPost(CreatePostDto request){
     try {
 
         Long userId = getCurrentUserId();

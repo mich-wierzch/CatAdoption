@@ -1,5 +1,6 @@
 package com.CatShelter.CatShelter.controller;
 
+import com.CatShelter.CatShelter.dto.CreatePostDto;
 import com.CatShelter.CatShelter.dto.PostDto;
 import com.CatShelter.CatShelter.service.PostService;
 import lombok.AllArgsConstructor;
@@ -15,8 +16,8 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping(path="/add")
-    public PostDto add(@RequestBody PostDto postDto) {
-        return postService.createPost(postDto);
+    public CreatePostDto add(@RequestBody CreatePostDto createPostDto) {
+        return postService.createPost(createPostDto);
 
     }
     @GetMapping(path="/getAll")
