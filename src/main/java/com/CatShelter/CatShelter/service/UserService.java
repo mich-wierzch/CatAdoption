@@ -108,7 +108,12 @@ public class UserService implements UserDetailsService {
 
             UserModel existingUser = userRepository.findByUserId(getCurrentUserId());
 
-            existingUser.setUsername(Optional.ofNullable(user.getUsername()).orElse(existingUser.getUsername()));
+            boolean usernameExists = userRepository.existsByUsername(user.getUsername());
+            if (!usernameExists) {
+                existingUser.setUsername(Optional.ofNullable(user.getUsername()).orElse(existingUser.getUsername()));
+            } else {
+                throw new IllegalArgumentException("Username already taken!");
+            }
             existingUser.setFirstName(Optional.ofNullable(user.getFirstName()).orElse(existingUser.getFirstName()));
             existingUser.setLastName(Optional.ofNullable(user.getLastName()).orElse(existingUser.getLastName()));
             existingUser.setMobile(Optional.ofNullable(user.getMobile()).orElse(existingUser.getMobile()));
