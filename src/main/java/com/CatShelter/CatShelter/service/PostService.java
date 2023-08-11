@@ -7,6 +7,8 @@ import com.CatShelter.CatShelter.model.PostModel;
 import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,8 +18,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+
+import java.io.*;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -28,32 +35,52 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final PostMapper postMapper;
+    private final Cloudinary cloudinary;
 
-    public CreatePostDto createPost(CreatePostDto request){
-    try {
+    public CreatePostDto createPost(CreatePostDto request) {
 
-        Long userId = getCurrentUserId();
+//        TODO: CHECK IF CLOUDINARY WORKS
+//        byte[] imageBytes = Base64.getDecoder().decode(request.getImageFile());
+//        File tempFile = null;
+//        String cloudinaryImageUrl = null;
+//        try {
+//            tempFile = File.createTempFile("temp", ".jpg");
+//            try (OutputStream os = new FileOutputStream(tempFile)) {
+//                os.write(imageBytes);
+//            }
+//            Map<?, ?> cloudinaryReponse = cloudinary.uploader().upload(tempFile, ObjectUtils.emptyMap());
+//        cloudinaryImageUrl = cloudinaryReponse.get("url").toString();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-        UserModel userModel = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
 
-        //TODO: CHECK IF FILE UPLOADING WORKS CORRECTLY
-        PostModel postModel = PostModel.builder()
-                .name(request.getName())
-                .gender(request.getGender())
-                .age(request.getAge())
-                .breed(request.getBreed())
-                .imageFile(request.getImageFile())
-                .description(request.getDescription())
-                .location(request.getLocation())
-                .user(userModel)
-                .createdAt(LocalDate.now())
-                .build();
-        postRepository.save(postModel);
-        return request;
-    } catch (NullPointerException e) {
-        throw new IllegalArgumentException("No user logged in");
-    }
+        try {
+
+            Long userId = getCurrentUserId();
+
+            UserModel userModel = userRepository.findById(userId)
+                    .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
+
+
+            //TODO: CHECK IF FILE UPLOADING WORKS CORRECTLY
+            PostModel postModel = PostModel.builder()
+                    .name(request.getName())
+                    .gender(request.getGender())
+                    .age(request.getAge())
+                    .breed(request.getBreed())
+//                    .imageFile(cloudinaryImageUrl)
+                    .imageFile(request.getImageFile())
+                    .description(request.getDescription())
+                    .location(request.getLocation())
+                    .user(userModel)
+                    .createdAt(LocalDate.now())
+                    .build();
+            postRepository.save(postModel);
+            return request;
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("No user logged in");
+        }
     }
 
     public List<PostDto> findAllPosts(PageRequest pageable){
