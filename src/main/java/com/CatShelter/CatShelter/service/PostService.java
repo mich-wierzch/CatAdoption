@@ -9,6 +9,8 @@ import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -54,16 +56,17 @@ public class PostService {
     }
     }
 
-    public List<PostDto> findAllPosts(){
-        List<PostModel> posts = postRepository.findAll();
+    public List<PostDto> findAllPosts(PageRequest pageable){
+        Page<PostModel> page = postRepository.findAll(pageable);
+        List<PostModel> posts = page.getContent();
         return posts.stream()
                 .map(postMapper::convertToDto)
                 .collect(Collectors.toList());
     }
     @Transactional
-    public List<PostDto> findPostsByUser(Long userId){
-
-        List<PostModel> posts = postRepository.findByUserUserId(userId);
+    public List<PostDto> findPostsByUser(Long userId, PageRequest pageable){
+        Page<PostModel> page = postRepository.findByUserUserId(userId, pageable);
+        List<PostModel> posts = page.getContent();
         return posts.stream()
                 .map(postMapper::convertToDto)
                 .collect(Collectors.toList());
