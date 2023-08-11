@@ -8,7 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.awt.print.Pageable;
 import java.util.List;
 @RequestMapping(path="/api/posts")
 @AllArgsConstructor

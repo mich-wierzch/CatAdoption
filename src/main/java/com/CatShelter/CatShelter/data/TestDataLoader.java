@@ -5,6 +5,7 @@
 //import com.CatShelter.CatShelter.model.UserRole;
 //import com.CatShelter.CatShelter.repository.PostRepository;
 //import com.CatShelter.CatShelter.repository.UserRepository;
+//import com.github.javafaker.Cat;
 //import com.github.javafaker.Faker;
 //import lombok.AllArgsConstructor;
 //import org.slf4j.Logger;
