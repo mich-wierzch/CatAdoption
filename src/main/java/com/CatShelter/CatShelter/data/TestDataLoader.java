@@ -11,11 +11,13 @@
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 //import org.springframework.boot.CommandLineRunner;
+//import org.springframework.cglib.core.Local;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 //import org.springframework.stereotype.Component;
 //
 //import java.time.LocalDate;
 //import java.util.List;
+//import java.util.concurrent.ThreadLocalRandom;
 //import java.util.stream.IntStream;
 //
 //@Component
@@ -73,12 +75,14 @@
 //                .mapToObj(i -> {
 //                            return PostModel.builder()
 //                            .name(faker.animal().name())
-//                            .gender("Female")
+//                            .gender(randomizeGender((int) (Math.random() * 2 + 1)))
 //                            .age((int) (1 + (Math.random() * 10)))
 //                            .breed(faker.cat().breed())
 //                            .imageFile("Placeholder for Base64 Image File")
 //                            .description("This is a test description for a cat. This cat is a very lovely cat.")
-//                            .createdAt(LocalDate.now())
+//                            .createdAt(LocalDate.ofYearDay(ThreadLocalRandom.current().nextInt(LocalDate.now().getYear(),
+//                                    LocalDate.now().plusYears(1).getYear()),
+//                                    ThreadLocalRandom.current().nextInt(1, 366)))
 //                            .location(faker.address().city())
 //                            .user(user1)
 //                            .build();
@@ -93,12 +97,14 @@
 //                .mapToObj(i -> {
 //                            return PostModel.builder()
 //                                    .name(faker.animal().name())
-//                                    .gender("Female")
+//                                    .gender(randomizeGender((int) (Math.random() * 2 + 1)))
 //                                    .age((int) (1 + (Math.random() * 10)))
 //                                    .breed(faker.cat().breed())
 //                                    .imageFile("Placeholder for Base64 Image File")
 //                                    .description("This is a test description for a cat. This cat is a very lovely cat.")
-//                                    .createdAt(LocalDate.now())
+//                                    .createdAt(LocalDate.ofYearDay(ThreadLocalRandom.current().nextInt(LocalDate.now().getYear(),
+//                                                    LocalDate.now().plusYears(1).getYear()),
+//                                            ThreadLocalRandom.current().nextInt(1, 366)))
 //                                    .location(faker.address().city())
 //                                    .user(user2)
 //                                    .build();
@@ -112,12 +118,14 @@
 //                .mapToObj(i -> {
 //                            return PostModel.builder()
 //                                    .name(faker.cat().name())
-//                                    .gender("Female")
+//                                    .gender(randomizeGender((int) (Math.random() * 2 + 1)))
 //                                    .age((int) (1 + (Math.random() * 10)))
 //                                    .breed(faker.cat().breed())
 //                                    .imageFile("Placeholder for Base64 Image File")
 //                                    .description("This is a test description for a cat. This cat is a very lovely cat.")
-//                                    .createdAt(LocalDate.now())
+//                                    .createdAt(LocalDate.ofYearDay(ThreadLocalRandom.current().nextInt(LocalDate.now().getYear(),
+//                                                    LocalDate.now().plusYears(1).getYear()),
+//                                            ThreadLocalRandom.current().nextInt(1, 366)))
 //                                    .location(faker.address().city())
 //                                    .user(user3)
 //                                    .build();
@@ -126,5 +134,8 @@
 //                .toList();
 //
 //        postRepository.saveAll(postsUser3);
+//    }
+//    public static String randomizeGender(int x){
+//        return x == 1 ? "Male" : "Female";
 //    }
 //}
