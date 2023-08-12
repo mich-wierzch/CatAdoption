@@ -109,6 +109,7 @@ public class PostService {
     }
 
     public void deletePost(Long postId){
+        //TODO: CHECK IF POST BEING DELETED BELONGS TO THE USER
         PostModel post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post with id " + postId + " not found"));
 
@@ -117,7 +118,7 @@ public class PostService {
     }
     @Transactional
     public PostDto updatePost(Long postId, PostDto postDto){
-
+    //TODO: IMPLEMENT CHECKING IF POST BEING UPDATED BELONGS TO THE USER
         try {
             PostModel post = postRepository.findByPostId(postId);
 

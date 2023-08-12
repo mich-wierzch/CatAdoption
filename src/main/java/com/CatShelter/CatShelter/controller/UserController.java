@@ -53,8 +53,8 @@ public class UserController {
     }
 
     @PostMapping(path="/update/password")
-    public String updateUserPassword(@RequestParam String password){
-        return userService.updatePassword(password);
+    public String updateUserPassword(@RequestParam String oldPassword, @RequestParam String newPassword){
+        return userService.updatePassword(oldPassword, newPassword);
     }
 
     @DeleteMapping(path="/delete")

@@ -121,22 +121,26 @@ public class UserService implements UserDetailsService {
             userRepository.save(existingUser);
             return userMapper.convertUserToDto(existingUser);
         } catch (NullPointerException e){
-            throw new IllegalArgumentException("User not found");
+            return null;
         }
     }
 
-    public String updatePassword(String password){
+    public String updatePassword(String oldPassword, String newPassword){
     try {
-
         UserModel existingUser = userRepository.findByUserId(getCurrentUserId());
 
-        existingUser.setPassword(bCryptPasswordEncoder.encode(password));
+        if (bCryptPasswordEncoder.matches(oldPassword, existingUser.getPassword())) {
 
-        userRepository.save(existingUser);
+            existingUser.setPassword(bCryptPasswordEncoder.encode(newPassword));
 
-        return "Password updated";
+            userRepository.save(existingUser);
+
+            return "Password updated";
+        } else {
+            return "Wrong password";
+        }
     } catch (NullPointerException e){
-        throw new IllegalArgumentException("User not found");
+        return null;
     }
 
     }
