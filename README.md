@@ -105,6 +105,8 @@ see the available endpoints.**
 
 **It is advised to use docker to run the application, otherwise it would require the user to manually set up a PostgreSQL database and change the application.properties configuration.**
 
+**You can automatically populate database with 3 users and 90 randomly generated posts with the provided TestDataLoader class. Before creating a docker container with "docker-compose up" uncomment the whole TestDataLoader class. Now while running the docker-compose up the database will be automatically filled with data so that you can test certain endpoints right away.**
+
 
 
 ## Roadmap
