@@ -111,7 +111,7 @@ see the available endpoints.**
 
 ## Roadmap
 
-- Next.js frontend is currently development.
+- Next.js frontend (work in progress ETA 09.2023).
 
 - Add more functions
 
