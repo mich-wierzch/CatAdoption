@@ -3,10 +3,17 @@
 
 Welcome to the Cat Adoption Service! This project aims to provide a platform for cat lovers to both adopt and post cats for adoption.
 
-## Tech Stack
 
-**Java, Spring Boot, Spring Security, Spring Data JPA, Maven, 
-Hibernate, PostgreSQL, Swagger, Lombok**
+## Tech Stack
+ **Core:** 
+
+Java 17, Spring Boot 3, Spring Security, Spring Data JPA, 
+Hibernate, PostgreSQL
+
+**Extra Dependencies:**
+
+Lombok, BCrypt, OpenAPI (Swagger), Java Faker, Cloudinary
+
 
 
 
