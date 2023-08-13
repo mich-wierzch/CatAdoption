@@ -34,8 +34,8 @@ public class PostModel {
     private String gender;
     private Integer age;
     private String breed;
-    @Lob
-    private List<String> imageFile;
+    @Embedded
+    private PostImages imageFile;
     private String description;
     @Embedded
     private Location location;
