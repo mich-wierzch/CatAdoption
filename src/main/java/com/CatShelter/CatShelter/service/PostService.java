@@ -22,10 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -69,7 +66,6 @@ public class PostService {
                     .gender(request.getGender())
                     .age(request.getAge())
                     .breed(request.getBreed())
-//                    .imageFile(cloudinaryImageUrl)
                     .imageFile(request.getImageFile())
                     .description(request.getDescription())
                     .location(request.getLocation())

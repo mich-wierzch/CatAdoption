@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(
@@ -34,9 +35,10 @@ public class PostModel {
     private Integer age;
     private String breed;
     @Lob
-    private String imageFile;
+    private List<String> imageFile;
     private String description;
-    private String location;
+    @Embedded
+    private Location location;
     private LocalDate createdAt;
 
     @ManyToOne
