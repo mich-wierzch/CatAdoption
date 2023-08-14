@@ -1,6 +1,5 @@
 package com.CatShelter.CatShelter.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,10 +32,11 @@ public class PostModel {
     private String gender;
     private Integer age;
     private String breed;
-    @Lob
-    private String imageFile;
+    @Embedded
+    private PostImages imageFile;
     private String description;
-    private String location;
+    @Embedded
+    private PostLocation location;
     private LocalDate createdAt;
 
     @ManyToOne

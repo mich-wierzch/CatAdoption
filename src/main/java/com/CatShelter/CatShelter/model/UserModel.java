@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(
@@ -78,6 +79,13 @@ public class UserModel implements UserDetails {
     private UserRole userRole;
     private boolean isBanned = false;
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<UserCommentModel> receivedComments;
+
+    @OneToMany(mappedBy = "commenter")
+    @JsonIgnore
+    private List<UserCommentModel> postedComments;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
