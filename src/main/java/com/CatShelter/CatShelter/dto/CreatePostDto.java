@@ -1,6 +1,6 @@
 package com.CatShelter.CatShelter.dto;
 
-import com.CatShelter.CatShelter.model.Location;
+import com.CatShelter.CatShelter.model.PostLocation;
 import com.CatShelter.CatShelter.model.PostImages;
 import lombok.Data;
 
@@ -15,7 +15,7 @@ public class CreatePostDto {
     private String breed;
     private PostImages imageFile;
     private String description;
-    private Location location;
+    private PostLocation location;
     private LocalDate createdAt;
 
 }

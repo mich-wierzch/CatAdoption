@@ -3,12 +3,12 @@ package com.CatShelter.CatShelter.service;
 import com.CatShelter.CatShelter.dto.CreatePostDto;
 import com.CatShelter.CatShelter.dto.PostDto;
 import com.CatShelter.CatShelter.mapper.PostMapper;
+import com.CatShelter.CatShelter.model.PostImages;
 import com.CatShelter.CatShelter.model.PostModel;
 import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-
-import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -122,7 +120,20 @@ public class PostService {
             post.setGender(Optional.ofNullable(postDto.getGender()).orElse(post.getGender()));
             post.setAge(Optional.ofNullable(postDto.getAge()).orElse(post.getAge()));
             post.setBreed(Optional.ofNullable(postDto.getBreed()).orElse(post.getBreed()));
-            post.setImageFile(Optional.ofNullable(postDto.getImageFile()).orElse(post.getImageFile()));
+
+            if (postDto.getImageFile()!=null) {
+                PostImages newPostImages = postDto.getImageFile();
+                PostImages oldPostImages = post.getImageFile();
+                if (newPostImages.getImageFirst() != null){
+                    oldPostImages.setImageFirst(newPostImages.getImageFirst());
+                }
+                if (newPostImages.getImageSecond() != null){
+                    oldPostImages.setImageSecond(newPostImages.getImageSecond());
+                }
+                if (newPostImages.getImageThird() != null){
+                    oldPostImages.setImageThird(newPostImages.getImageThird());
+                }
+            }
             post.setDescription(Optional.ofNullable(postDto.getDescription()).orElse(post.getDescription()));
             post.setLocation(Optional.ofNullable(postDto.getLocation()).orElse(post.getLocation()));
 

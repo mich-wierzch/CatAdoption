@@ -81,7 +81,7 @@
 //
 //        List<PostModel> postsUser1 = IntStream.rangeClosed(1, 30)
 //                .mapToObj(i -> {
-//                            Location location = new Location();
+//                            PostLocation location = new PostLocation();
 //                            location.setCity(faker.address().city());
 //                            location.setLatitude(Float.parseFloat(faker.address().latitude().replace(",", ".")));
 //                            location.setLongitude(Float.parseFloat(faker.address().longitude().replace("," , ".")));
@@ -108,7 +108,7 @@
 //
 //        List<PostModel> postsUser2 = IntStream.rangeClosed(1, 30)
 //                .mapToObj(i -> {
-//                    Location location = new Location();
+//                    PostLocation location = new PostLocation();
 //                    location.setCity(faker.address().city());
 //                    location.setLatitude(Float.parseFloat(faker.address().latitude().replace(",", ".")));
 //                    location.setLongitude(Float.parseFloat(faker.address().longitude().replace("," , ".")));
@@ -135,7 +135,7 @@
 //
 //        List<PostModel> postsUser3 = IntStream.rangeClosed(1, 30)
 //                .mapToObj(i -> {
-//                    Location location = new Location();
+//                    PostLocation location = new PostLocation();
 //                    location.setCity(faker.address().city());
 //                    location.setLatitude(Float.parseFloat(faker.address().latitude().replace(",", ".")));
 //                    location.setLongitude(Float.parseFloat(faker.address().longitude().replace("," , ".")));

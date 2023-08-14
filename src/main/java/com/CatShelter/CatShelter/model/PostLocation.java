@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Location{
+public class PostLocation {
     private String city;
     private float latitude;
     private float longitude;
