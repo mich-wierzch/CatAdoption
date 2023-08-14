@@ -2,10 +2,12 @@ package com.CatShelter.CatShelter.service;
 
 import com.CatShelter.CatShelter.dto.CreatePostDto;
 import com.CatShelter.CatShelter.dto.PostDto;
+import com.CatShelter.CatShelter.dto.PostImageDto;
 import com.CatShelter.CatShelter.mapper.PostMapper;
-import com.CatShelter.CatShelter.model.PostImages;
+import com.CatShelter.CatShelter.model.PostImagesModel;
 import com.CatShelter.CatShelter.model.PostModel;
 import com.CatShelter.CatShelter.model.UserModel;
+import com.CatShelter.CatShelter.repository.PostImagesRepository;
 import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import com.cloudinary.Cloudinary;
@@ -29,26 +31,11 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final PostImagesRepository postImagesRepository;
     private final PostMapper postMapper;
     private final Cloudinary cloudinary;
 
     public CreatePostDto createPost(CreatePostDto request) {
-
-//        TODO: CHECK IF CLOUDINARY WORKS
-//        byte[] imageBytes = Base64.getDecoder().decode(request.getImageFile());
-//        File tempFile = null;
-//        String cloudinaryImageUrl = null;
-//        try {
-//            tempFile = File.createTempFile("temp", ".jpg");
-//            try (OutputStream os = new FileOutputStream(tempFile)) {
-//                os.write(imageBytes);
-//            }
-//            Map<?, ?> cloudinaryReponse = cloudinary.uploader().upload(tempFile, ObjectUtils.emptyMap());
-//        cloudinaryImageUrl = cloudinaryReponse.get("url").toString();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
 
         try {
 
@@ -57,20 +44,33 @@ public class PostService {
             UserModel userModel = userRepository.findById(userId)
                     .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
 
+            List<String> imageUrls = request.getImages();
 
-            //TODO: CHECK IF FILE UPLOADING WORKS CORRECTLY
+
+
             PostModel postModel = PostModel.builder()
                     .name(request.getName())
                     .gender(request.getGender())
                     .age(request.getAge())
                     .breed(request.getBreed())
-                    .imageFile(request.getImageFile())
                     .description(request.getDescription())
                     .location(request.getLocation())
                     .user(userModel)
                     .createdAt(LocalDate.now())
                     .build();
             postRepository.save(postModel);
+
+            boolean isFirstImage = true;
+            for (String imageUrl : imageUrls){
+                PostImagesModel imageModel = PostImagesModel.builder()
+                        .image(imageUrl)
+                        .isFeatured(isFirstImage)
+                        .post(postModel)
+                        .build();
+                postImagesRepository.save(imageModel);
+                isFirstImage = false;
+            }
+
             return request;
         } catch (NullPointerException e) {
             throw new IllegalArgumentException("No user logged in");
@@ -120,20 +120,7 @@ public class PostService {
             post.setGender(Optional.ofNullable(postDto.getGender()).orElse(post.getGender()));
             post.setAge(Optional.ofNullable(postDto.getAge()).orElse(post.getAge()));
             post.setBreed(Optional.ofNullable(postDto.getBreed()).orElse(post.getBreed()));
-
-            if (postDto.getImageFile()!=null) {
-                PostImages newPostImages = postDto.getImageFile();
-                PostImages oldPostImages = post.getImageFile();
-                if (newPostImages.getImageFirst() != null){
-                    oldPostImages.setImageFirst(newPostImages.getImageFirst());
-                }
-                if (newPostImages.getImageSecond() != null){
-                    oldPostImages.setImageSecond(newPostImages.getImageSecond());
-                }
-                if (newPostImages.getImageThird() != null){
-                    oldPostImages.setImageThird(newPostImages.getImageThird());
-                }
-            }
+            //TODO: ADD IMAGE UPDATING
             post.setDescription(Optional.ofNullable(postDto.getDescription()).orElse(post.getDescription()));
             post.setLocation(Optional.ofNullable(postDto.getLocation()).orElse(post.getLocation()));
 
