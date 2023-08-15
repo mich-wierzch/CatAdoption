@@ -2,6 +2,7 @@ package com.CatShelter.CatShelter.controller;
 
 import com.CatShelter.CatShelter.dto.CreatePostDto;
 import com.CatShelter.CatShelter.dto.PostDto;
+import com.CatShelter.CatShelter.dto.UpdatePostDto;
 import com.CatShelter.CatShelter.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -50,7 +51,7 @@ public class PostController {
 
     @PatchMapping(path="/update/{postId}")
     public PostDto updatePost(@PathVariable Long postId,
-                              @RequestBody PostDto postDto){
-        return postService.updatePost(postId, postDto);
+                                    @RequestBody UpdatePostDto updatePostDto){
+        return postService.updatePost(postId, updatePostDto);
     }
 }

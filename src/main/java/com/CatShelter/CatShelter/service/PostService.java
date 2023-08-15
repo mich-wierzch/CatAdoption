@@ -3,6 +3,7 @@ package com.CatShelter.CatShelter.service;
 import com.CatShelter.CatShelter.dto.CreatePostDto;
 import com.CatShelter.CatShelter.dto.PostDto;
 import com.CatShelter.CatShelter.dto.PostImageDto;
+import com.CatShelter.CatShelter.dto.UpdatePostDto;
 import com.CatShelter.CatShelter.mapper.PostMapper;
 import com.CatShelter.CatShelter.model.PostImagesModel;
 import com.CatShelter.CatShelter.model.PostModel;
@@ -10,7 +11,6 @@ import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.repository.PostImagesRepository;
 import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
-import com.cloudinary.Cloudinary;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,9 +20,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -33,7 +33,6 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostImagesRepository postImagesRepository;
     private final PostMapper postMapper;
-    private final Cloudinary cloudinary;
 
     public CreatePostDto createPost(CreatePostDto request) {
 
@@ -111,18 +110,46 @@ public class PostService {
 
     }
     @Transactional
-    public PostDto updatePost(Long postId, PostDto postDto){
+    public PostDto updatePost(Long postId, UpdatePostDto updatePostDto){
     //TODO: IMPLEMENT CHECKING IF POST BEING UPDATED BELONGS TO THE USER
         try {
             PostModel post = postRepository.findByPostId(postId);
 
-            post.setName(Optional.ofNullable(postDto.getName()).orElse(post.getName()));
-            post.setGender(Optional.ofNullable(postDto.getGender()).orElse(post.getGender()));
-            post.setAge(Optional.ofNullable(postDto.getAge()).orElse(post.getAge()));
-            post.setBreed(Optional.ofNullable(postDto.getBreed()).orElse(post.getBreed()));
-            //TODO: ADD IMAGE UPDATING
-            post.setDescription(Optional.ofNullable(postDto.getDescription()).orElse(post.getDescription()));
-            post.setLocation(Optional.ofNullable(postDto.getLocation()).orElse(post.getLocation()));
+            post.setName(Optional.ofNullable(updatePostDto.getName()).orElse(post.getName()));
+            post.setGender(Optional.ofNullable(updatePostDto.getGender()).orElse(post.getGender()));
+            post.setAge(Optional.ofNullable(updatePostDto.getAge()).orElse(post.getAge()));
+            post.setBreed(Optional.ofNullable(updatePostDto.getBreed()).orElse(post.getBreed()));
+            post.setDescription(Optional.ofNullable(updatePostDto.getDescription()).orElse(post.getDescription()));
+            post.setLocation(Optional.ofNullable(updatePostDto.getLocation()).orElse(post.getLocation()));
+
+            List<String> newImageUrls = updatePostDto.getImages();
+            List<PostImagesModel> existingImages = postImagesRepository.findAllByPostPostIdOrderByImageIdAsc(postId);
+
+            int index = 0;
+            for(PostImagesModel existingImage : existingImages){
+                if(index < newImageUrls.size()) {
+                    if (!existingImage.getImage().equals(newImageUrls.get(index))) {
+                        existingImage.setImage(newImageUrls.get(index));
+                    }
+                } else {
+                    break;
+                }
+                index++;
+            }
+
+            for (; index < newImageUrls.size(); index++){
+                PostImagesModel newImage = PostImagesModel.builder()
+                        .image(newImageUrls.get(index))
+                        .post(post)
+                        .isFeatured(false)
+                        .build();
+                postImagesRepository.save(newImage);
+            }
+
+
+            postRepository.save(post);
+
+
 
             return postMapper.convertToDto(post);
         } catch (NullPointerException e){

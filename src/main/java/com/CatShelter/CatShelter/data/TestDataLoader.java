@@ -4,23 +4,18 @@
 //import com.CatShelter.CatShelter.repository.PostImagesRepository;
 //import com.CatShelter.CatShelter.repository.PostRepository;
 //import com.CatShelter.CatShelter.repository.UserRepository;
-//import com.github.javafaker.Cat;
 //import com.github.javafaker.Faker;
 //import lombok.AllArgsConstructor;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 //import org.springframework.boot.CommandLineRunner;
-//import org.springframework.cglib.core.Local;
-//import org.springframework.security.core.parameters.P;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 //import org.springframework.stereotype.Component;
 //
 //import java.time.LocalDate;
 //import java.util.ArrayList;
-//import java.util.Collections;
 //import java.util.List;
 //import java.util.concurrent.ThreadLocalRandom;
-//import java.util.stream.IntStream;
 //
 //@Component
 //@AllArgsConstructor

@@ -1,6 +1,5 @@
 package com.CatShelter.CatShelter.dto;
 
-import com.CatShelter.CatShelter.model.PostImagesModel;
 import com.CatShelter.CatShelter.model.PostLocation;
 import lombok.Data;
 
