@@ -2,7 +2,6 @@ package com.CatShelter.CatShelter.service;
 
 import com.CatShelter.CatShelter.dto.CreatePostDto;
 import com.CatShelter.CatShelter.dto.PostDto;
-import com.CatShelter.CatShelter.dto.PostImageDto;
 import com.CatShelter.CatShelter.dto.UpdatePostDto;
 import com.CatShelter.CatShelter.mapper.PostMapper;
 import com.CatShelter.CatShelter.model.PostImagesModel;
@@ -15,8 +14,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

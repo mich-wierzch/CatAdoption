@@ -1,6 +1,5 @@
 package com.CatShelter.CatShelter.repository;
 
-import com.CatShelter.CatShelter.dto.UserCommentDto;
 import com.CatShelter.CatShelter.model.UserCommentModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

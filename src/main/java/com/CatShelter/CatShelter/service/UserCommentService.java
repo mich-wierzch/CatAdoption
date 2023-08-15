@@ -3,17 +3,13 @@ package com.CatShelter.CatShelter.service;
 import com.CatShelter.CatShelter.dto.UserCommentDto;
 import com.CatShelter.CatShelter.mapper.UserCommentMapper;
 import com.CatShelter.CatShelter.model.UserCommentModel;
-import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.repository.UserCommentRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
