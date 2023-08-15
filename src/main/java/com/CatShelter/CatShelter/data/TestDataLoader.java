@@ -3,6 +3,7 @@
 //import com.CatShelter.CatShelter.model.*;
 //import com.CatShelter.CatShelter.repository.PostImagesRepository;
 //import com.CatShelter.CatShelter.repository.PostRepository;
+//import com.CatShelter.CatShelter.repository.UserCommentRepository;
 //import com.CatShelter.CatShelter.repository.UserRepository;
 //import com.github.javafaker.Faker;
 //import lombok.AllArgsConstructor;
@@ -13,6 +14,7 @@
 //import org.springframework.stereotype.Component;
 //
 //import java.time.LocalDate;
+//import java.time.LocalDateTime;
 //import java.util.ArrayList;
 //import java.util.List;
 //import java.util.concurrent.ThreadLocalRandom;
@@ -27,6 +29,7 @@
 //    private final Faker faker;
 //    private final PostRepository postRepository;
 //    private final PostImagesRepository postImagesRepository;
+//    private final UserCommentRepository userCommentRepository;
 //    @Override
 //    public void run(String... args) throws Exception {
 //
@@ -106,6 +109,14 @@
 //                isFirstImage = false;
 //            }
 //
+//            UserCommentModel comment = UserCommentModel.builder()
+//                    .user(user2)
+//                    .commenter(user1)
+//                    .text("New Comment " + i)
+//                    .timestamp(LocalDateTime.now())
+//                    .build();
+//            userCommentRepository.save(comment);
+//
 //        }
 //        for (int i = 0; i<30 ;i++) {
 //            PostLocation location = new PostLocation();
@@ -139,6 +150,13 @@
 //                postImagesRepository.save(imageModel);
 //                isFirstImage = false;
 //            }
+//            UserCommentModel comment = UserCommentModel.builder()
+//                    .user(user1)
+//                    .commenter(user2)
+//                    .text("New Comment " + i)
+//                    .timestamp(LocalDateTime.now())
+//                    .build();
+//            userCommentRepository.save(comment);
 //
 //        }
 //        for (int i = 0; i<30 ;i++) {
@@ -173,8 +191,16 @@
 //                postImagesRepository.save(imageModel);
 //                isFirstImage = false;
 //            }
+//            UserCommentModel comment = UserCommentModel.builder()
+//                    .user(user3)
+//                    .commenter(user2)
+//                    .text("New Comment " + i)
+//                    .timestamp(LocalDateTime.now())
+//                    .build();
+//            userCommentRepository.save(comment);
 //
 //        }
+//
 //
 //    }
 //    public static String randomizeGender(int x){
