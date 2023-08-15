@@ -33,12 +33,13 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostImagesRepository postImagesRepository;
     private final PostMapper postMapper;
+    private final AuthenticationService authenticationService;
 
     public CreatePostDto createPost(CreatePostDto request) {
 
         try {
 
-            Long userId = getCurrentUserId();
+            Long userId = authenticationService.getCurrentUserId();
 
             UserModel userModel = userRepository.findById(userId)
                     .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
@@ -157,14 +158,7 @@ public class PostService {
         }
 
     }
-    public Authentication getCurrentAuthentication(){
-        return SecurityContextHolder.getContext().getAuthentication();
-    }
 
-    public Long getCurrentUserId(){
-        Authentication authentication = getCurrentAuthentication();
-        return ((UserModel) authentication.getPrincipal()).getUserId();
-    }
 
 
 }
