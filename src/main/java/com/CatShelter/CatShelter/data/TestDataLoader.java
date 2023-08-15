@@ -67,8 +67,8 @@
 //        logger.info("Creating sample posts...");
 //
 //        List<String> imageUrls = new ArrayList<>();
-//        imageUrls.add("Image path 1");
-//        imageUrls.add("Image path 2");
+//        imageUrls.add("https://res.cloudinary.com/dvuvqeolh/image/upload/v1692124900/cat_ouxyx7.webp");
+//        imageUrls.add("https://res.cloudinary.com/dvuvqeolh/image/upload/v1692124952/catweird_o1qxxy.jpg");
 //
 //
 //
