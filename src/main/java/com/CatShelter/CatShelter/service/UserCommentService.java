@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +43,20 @@ public class UserCommentService {
         return comment.stream()
                 .map(userCommentMapper::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    public UserCommentDto removeComment(Long commentId){
+        UserCommentModel comment = userCommentRepository.findByCommentId(commentId);
+        try {
+            if (comment.getUser().getUserId().equals(getCurrentUserId())
+                    || comment.getCommenter().getUserId().equals(getCurrentUserId())) {
+                userCommentRepository.delete(comment);
+                return userCommentMapper.convertToDto(comment);
+            } else return null;
+        } catch (NullPointerException e){
+            return null;
+        }
+
     }
 
     public Authentication getCurrentAuthentication(){
