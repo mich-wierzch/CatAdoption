@@ -1,25 +1,23 @@
 //package com.CatShelter.CatShelter.data;
 //
 //import com.CatShelter.CatShelter.model.*;
+//import com.CatShelter.CatShelter.repository.PostImagesRepository;
 //import com.CatShelter.CatShelter.repository.PostRepository;
+//import com.CatShelter.CatShelter.repository.UserCommentRepository;
 //import com.CatShelter.CatShelter.repository.UserRepository;
-//import com.github.javafaker.Cat;
 //import com.github.javafaker.Faker;
 //import lombok.AllArgsConstructor;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 //import org.springframework.boot.CommandLineRunner;
-//import org.springframework.cglib.core.Local;
-//import org.springframework.security.core.parameters.P;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 //import org.springframework.stereotype.Component;
 //
 //import java.time.LocalDate;
+//import java.time.LocalDateTime;
 //import java.util.ArrayList;
-//import java.util.Collections;
 //import java.util.List;
 //import java.util.concurrent.ThreadLocalRandom;
-//import java.util.stream.IntStream;
 //
 //@Component
 //@AllArgsConstructor
@@ -30,6 +28,8 @@
 //    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 //    private final Faker faker;
 //    private final PostRepository postRepository;
+//    private final PostImagesRepository postImagesRepository;
+//    private final UserCommentRepository userCommentRepository;
 //    @Override
 //    public void run(String... args) throws Exception {
 //
@@ -69,95 +69,139 @@
 //
 //        logger.info("Creating sample posts...");
 //
-//
-//
-//        PostImages postImages = new PostImages();
-//        postImages.setImageFirst("Image number 1");
-//        postImages.setImageSecond("Image number 2");
-//        postImages.setImageThird("Image number 3");
+//        List<String> imageUrls = new ArrayList<>();
+//        imageUrls.add("https://res.cloudinary.com/dvuvqeolh/image/upload/v1692124900/cat_ouxyx7.webp");
+//        imageUrls.add("https://res.cloudinary.com/dvuvqeolh/image/upload/v1692124952/catweird_o1qxxy.jpg");
 //
 //
 //
 //
-//        List<PostModel> postsUser1 = IntStream.rangeClosed(1, 30)
-//                .mapToObj(i -> {
-//                            PostLocation location = new PostLocation();
-//                            location.setCity(faker.address().city());
-//                            location.setLatitude(Float.parseFloat(faker.address().latitude().replace(",", ".")));
-//                            location.setLongitude(Float.parseFloat(faker.address().longitude().replace("," , ".")));
+//        for (int i = 0; i<30 ;i++) {
+//            PostLocation location = new PostLocation();
+//            location.setCity(faker.address().city());
+//            location.setLatitude(Float.parseFloat(faker.address().latitude().replace(",", ".")));
+//            location.setLongitude(Float.parseFloat(faker.address().longitude().replace(",", ".")));
 //
-//                            return PostModel.builder()
-//                            .name(faker.animal().name())
-//                            .gender(randomizeGender((int) (Math.random() * 2 + 1)))
-//                            .age((int) (1 + (Math.random() * 10)))
-//                            .breed(faker.cat().breed())
-//                            .imageFile(postImages)
-//                            .description("This is a test description for a cat. This cat is a very lovely cat.")
-//                            .createdAt(LocalDate.ofYearDay(ThreadLocalRandom.current().nextInt(LocalDate.now().getYear(),
+//
+//            PostModel post = PostModel.builder()
+//                    .name(faker.animal().name())
+//                    .gender(randomizeGender((int) (Math.random() * 2 + 1)))
+//                    .age((int) (1 + (Math.random() * 10)))
+//                    .breed(faker.cat().breed())
+//                    .description("This is a test description for a cat. This cat is a very lovely cat.")
+//                    .createdAt(LocalDate.ofYearDay(ThreadLocalRandom.current().nextInt(LocalDate.now().getYear(),
 //                                    LocalDate.now().plusYears(1).getYear()),
-//                                    ThreadLocalRandom.current().nextInt(1, 366)))
-//                            .location(location)
-//                            .user(user1)
-//                            .build();
-//                }
-//                )
-//                .toList();
+//                            ThreadLocalRandom.current().nextInt(1, 366)))
+//                    .location(location)
+//                    .user(user1)
+//                    .build();
+//
+//            postRepository.save(post);
+//
+//            boolean isFirstImage = true;
+//            for (String imageUrl : imageUrls) {
+//                PostImagesModel imageModel = PostImagesModel.builder()
+//                        .image(imageUrl)
+//                        .isFeatured(isFirstImage)
+//                        .post(post)
+//                        .build();
+//                postImagesRepository.save(imageModel);
+//                isFirstImage = false;
+//            }
+//
+//            UserCommentModel comment = UserCommentModel.builder()
+//                    .user(user2)
+//                    .commenter(user1)
+//                    .text("New Comment " + i)
+//                    .timestamp(LocalDateTime.now())
+//                    .build();
+//            userCommentRepository.save(comment);
+//
+//        }
+//        for (int i = 0; i<30 ;i++) {
+//            PostLocation location = new PostLocation();
+//            location.setCity(faker.address().city());
+//            location.setLatitude(Float.parseFloat(faker.address().latitude().replace(",", ".")));
+//            location.setLongitude(Float.parseFloat(faker.address().longitude().replace(",", ".")));
 //
 //
-//        postRepository.saveAll(postsUser1);
+//            PostModel post = PostModel.builder()
+//                    .name(faker.animal().name())
+//                    .gender(randomizeGender((int) (Math.random() * 2 + 1)))
+//                    .age((int) (1 + (Math.random() * 10)))
+//                    .breed(faker.cat().breed())
+//                    .description("This is a test description for a cat. This cat is a very lovely cat.")
+//                    .createdAt(LocalDate.ofYearDay(ThreadLocalRandom.current().nextInt(LocalDate.now().getYear(),
+//                                    LocalDate.now().plusYears(1).getYear()),
+//                            ThreadLocalRandom.current().nextInt(1, 366)))
+//                    .location(location)
+//                    .user(user2)
+//                    .build();
 //
-//        List<PostModel> postsUser2 = IntStream.rangeClosed(1, 30)
-//                .mapToObj(i -> {
-//                    PostLocation location = new PostLocation();
-//                    location.setCity(faker.address().city());
-//                    location.setLatitude(Float.parseFloat(faker.address().latitude().replace(",", ".")));
-//                    location.setLongitude(Float.parseFloat(faker.address().longitude().replace("," , ".")));
+//            postRepository.save(post);
+//
+//            boolean isFirstImage = true;
+//            for (String imageUrl : imageUrls) {
+//                PostImagesModel imageModel = PostImagesModel.builder()
+//                        .image(imageUrl)
+//                        .isFeatured(isFirstImage)
+//                        .post(post)
+//                        .build();
+//                postImagesRepository.save(imageModel);
+//                isFirstImage = false;
+//            }
+//            UserCommentModel comment = UserCommentModel.builder()
+//                    .user(user1)
+//                    .commenter(user2)
+//                    .text("New Comment " + i)
+//                    .timestamp(LocalDateTime.now())
+//                    .build();
+//            userCommentRepository.save(comment);
+//
+//        }
+//        for (int i = 0; i<30 ;i++) {
+//            PostLocation location = new PostLocation();
+//            location.setCity(faker.address().city());
+//            location.setLatitude(Float.parseFloat(faker.address().latitude().replace(",", ".")));
+//            location.setLongitude(Float.parseFloat(faker.address().longitude().replace(",", ".")));
 //
 //
-//                            return PostModel.builder()
-//                                    .name(faker.animal().name())
-//                                    .gender(randomizeGender((int) (Math.random() * 2 + 1)))
-//                                    .age((int) (1 + (Math.random() * 10)))
-//                                    .breed(faker.cat().breed())
-//                                    .imageFile(postImages)
-//                                    .description("This is a test description for a cat. This cat is a very lovely cat.")
-//                                    .createdAt(LocalDate.ofYearDay(ThreadLocalRandom.current().nextInt(LocalDate.now().getYear(),
-//                                                    LocalDate.now().plusYears(1).getYear()),
-//                                            ThreadLocalRandom.current().nextInt(1, 366)))
-//                                    .location(location)
-//                                    .user(user2)
-//                                    .build();
-//                        }
-//                )
-//                .toList();
+//            PostModel post = PostModel.builder()
+//                    .name(faker.animal().name())
+//                    .gender(randomizeGender((int) (Math.random() * 2 + 1)))
+//                    .age((int) (1 + (Math.random() * 10)))
+//                    .breed(faker.cat().breed())
+//                    .description("This is a test description for a cat. This cat is a very lovely cat.")
+//                    .createdAt(LocalDate.ofYearDay(ThreadLocalRandom.current().nextInt(LocalDate.now().getYear(),
+//                                    LocalDate.now().plusYears(1).getYear()),
+//                            ThreadLocalRandom.current().nextInt(1, 366)))
+//                    .location(location)
+//                    .user(user3)
+//                    .build();
 //
-//        postRepository.saveAll(postsUser2);
+//            postRepository.save(post);
 //
-//        List<PostModel> postsUser3 = IntStream.rangeClosed(1, 30)
-//                .mapToObj(i -> {
-//                    PostLocation location = new PostLocation();
-//                    location.setCity(faker.address().city());
-//                    location.setLatitude(Float.parseFloat(faker.address().latitude().replace(",", ".")));
-//                    location.setLongitude(Float.parseFloat(faker.address().longitude().replace("," , ".")));
+//            boolean isFirstImage = true;
+//            for (String imageUrl : imageUrls) {
+//                PostImagesModel imageModel = PostImagesModel.builder()
+//                        .image(imageUrl)
+//                        .isFeatured(isFirstImage)
+//                        .post(post)
+//                        .build();
+//                postImagesRepository.save(imageModel);
+//                isFirstImage = false;
+//            }
+//            UserCommentModel comment = UserCommentModel.builder()
+//                    .user(user3)
+//                    .commenter(user2)
+//                    .text("New Comment " + i)
+//                    .timestamp(LocalDateTime.now())
+//                    .build();
+//            userCommentRepository.save(comment);
 //
-//                            return PostModel.builder()
-//                                    .name(faker.cat().name())
-//                                    .gender(randomizeGender((int) (Math.random() * 2 + 1)))
-//                                    .age((int) (1 + (Math.random() * 10)))
-//                                    .breed(faker.cat().breed())
-//                                    .imageFile(postImages)
-//                                    .description("This is a test description for a cat. This cat is a very lovely cat.")
-//                                    .createdAt(LocalDate.ofYearDay(ThreadLocalRandom.current().nextInt(LocalDate.now().getYear(),
-//                                                    LocalDate.now().plusYears(1).getYear()),
-//                                            ThreadLocalRandom.current().nextInt(1, 366)))
-//                                    .location(location)
-//                                    .user(user3)
-//                                    .build();
-//                        }
-//                )
-//                .toList();
+//        }
 //
-//        postRepository.saveAll(postsUser3);
+//
 //    }
 //    public static String randomizeGender(int x){
 //        return x == 1 ? "Male" : "Female";

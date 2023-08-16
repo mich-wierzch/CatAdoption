@@ -11,8 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-
 @RestController
 @RequestMapping(path="/api/user")
 @RequiredArgsConstructor

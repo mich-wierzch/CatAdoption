@@ -1,10 +1,10 @@
 package com.CatShelter.CatShelter.dto;
 
 import com.CatShelter.CatShelter.model.PostLocation;
-import com.CatShelter.CatShelter.model.PostImages;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 
@@ -13,7 +13,7 @@ public class CreatePostDto {
     private String gender;
     private Integer age;
     private String breed;
-    private PostImages imageFile;
+    private List<String> images;
     private String description;
     private PostLocation location;
     private LocalDate createdAt;

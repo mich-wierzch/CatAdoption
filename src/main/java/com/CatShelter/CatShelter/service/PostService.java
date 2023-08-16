@@ -2,25 +2,24 @@ package com.CatShelter.CatShelter.service;
 
 import com.CatShelter.CatShelter.dto.CreatePostDto;
 import com.CatShelter.CatShelter.dto.PostDto;
+import com.CatShelter.CatShelter.dto.UpdatePostDto;
 import com.CatShelter.CatShelter.mapper.PostMapper;
-import com.CatShelter.CatShelter.model.PostImages;
+import com.CatShelter.CatShelter.model.PostImagesModel;
 import com.CatShelter.CatShelter.model.PostModel;
 import com.CatShelter.CatShelter.model.UserModel;
+import com.CatShelter.CatShelter.repository.PostImagesRepository;
 import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
-import com.cloudinary.Cloudinary;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -29,48 +28,46 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final PostImagesRepository postImagesRepository;
     private final PostMapper postMapper;
-    private final Cloudinary cloudinary;
+    private final AuthenticationService authenticationService;
 
     public CreatePostDto createPost(CreatePostDto request) {
 
-//        TODO: CHECK IF CLOUDINARY WORKS
-//        byte[] imageBytes = Base64.getDecoder().decode(request.getImageFile());
-//        File tempFile = null;
-//        String cloudinaryImageUrl = null;
-//        try {
-//            tempFile = File.createTempFile("temp", ".jpg");
-//            try (OutputStream os = new FileOutputStream(tempFile)) {
-//                os.write(imageBytes);
-//            }
-//            Map<?, ?> cloudinaryReponse = cloudinary.uploader().upload(tempFile, ObjectUtils.emptyMap());
-//        cloudinaryImageUrl = cloudinaryReponse.get("url").toString();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-
         try {
 
-            Long userId = getCurrentUserId();
+            Long userId = authenticationService.getCurrentUserId();
 
             UserModel userModel = userRepository.findById(userId)
                     .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
 
+            List<String> imageUrls = request.getImages();
 
-            //TODO: CHECK IF FILE UPLOADING WORKS CORRECTLY
+
+
             PostModel postModel = PostModel.builder()
                     .name(request.getName())
                     .gender(request.getGender())
                     .age(request.getAge())
                     .breed(request.getBreed())
-                    .imageFile(request.getImageFile())
                     .description(request.getDescription())
                     .location(request.getLocation())
                     .user(userModel)
                     .createdAt(LocalDate.now())
                     .build();
             postRepository.save(postModel);
+
+            boolean isFirstImage = true;
+            for (String imageUrl : imageUrls){
+                PostImagesModel imageModel = PostImagesModel.builder()
+                        .image(imageUrl)
+                        .isFeatured(isFirstImage)
+                        .post(postModel)
+                        .build();
+                postImagesRepository.save(imageModel);
+                isFirstImage = false;
+            }
+
             return request;
         } catch (NullPointerException e) {
             throw new IllegalArgumentException("No user logged in");
@@ -111,31 +108,46 @@ public class PostService {
 
     }
     @Transactional
-    public PostDto updatePost(Long postId, PostDto postDto){
+    public PostDto updatePost(Long postId, UpdatePostDto updatePostDto){
     //TODO: IMPLEMENT CHECKING IF POST BEING UPDATED BELONGS TO THE USER
         try {
             PostModel post = postRepository.findByPostId(postId);
 
-            post.setName(Optional.ofNullable(postDto.getName()).orElse(post.getName()));
-            post.setGender(Optional.ofNullable(postDto.getGender()).orElse(post.getGender()));
-            post.setAge(Optional.ofNullable(postDto.getAge()).orElse(post.getAge()));
-            post.setBreed(Optional.ofNullable(postDto.getBreed()).orElse(post.getBreed()));
+            post.setName(Optional.ofNullable(updatePostDto.getName()).orElse(post.getName()));
+            post.setGender(Optional.ofNullable(updatePostDto.getGender()).orElse(post.getGender()));
+            post.setAge(Optional.ofNullable(updatePostDto.getAge()).orElse(post.getAge()));
+            post.setBreed(Optional.ofNullable(updatePostDto.getBreed()).orElse(post.getBreed()));
+            post.setDescription(Optional.ofNullable(updatePostDto.getDescription()).orElse(post.getDescription()));
+            post.setLocation(Optional.ofNullable(updatePostDto.getLocation()).orElse(post.getLocation()));
 
-            if (postDto.getImageFile()!=null) {
-                PostImages newPostImages = postDto.getImageFile();
-                PostImages oldPostImages = post.getImageFile();
-                if (newPostImages.getImageFirst() != null){
-                    oldPostImages.setImageFirst(newPostImages.getImageFirst());
+            List<String> newImageUrls = updatePostDto.getImages();
+            List<PostImagesModel> existingImages = postImagesRepository.findAllByPostPostIdOrderByImageIdAsc(postId);
+
+            int index = 0;
+            for(PostImagesModel existingImage : existingImages){
+                if(index < newImageUrls.size()) {
+                    if (!existingImage.getImage().equals(newImageUrls.get(index))) {
+                        existingImage.setImage(newImageUrls.get(index));
+                    }
+                } else {
+                    break;
                 }
-                if (newPostImages.getImageSecond() != null){
-                    oldPostImages.setImageSecond(newPostImages.getImageSecond());
-                }
-                if (newPostImages.getImageThird() != null){
-                    oldPostImages.setImageThird(newPostImages.getImageThird());
-                }
+                index++;
             }
-            post.setDescription(Optional.ofNullable(postDto.getDescription()).orElse(post.getDescription()));
-            post.setLocation(Optional.ofNullable(postDto.getLocation()).orElse(post.getLocation()));
+
+            for (; index < newImageUrls.size(); index++){
+                PostImagesModel newImage = PostImagesModel.builder()
+                        .image(newImageUrls.get(index))
+                        .post(post)
+                        .isFeatured(false)
+                        .build();
+                postImagesRepository.save(newImage);
+            }
+
+
+            postRepository.save(post);
+
+
 
             return postMapper.convertToDto(post);
         } catch (NullPointerException e){
@@ -143,14 +155,7 @@ public class PostService {
         }
 
     }
-    public Authentication getCurrentAuthentication(){
-        return SecurityContextHolder.getContext().getAuthentication();
-    }
 
-    public Long getCurrentUserId(){
-        Authentication authentication = getCurrentAuthentication();
-        return ((UserModel) authentication.getPrincipal()).getUserId();
-    }
 
 
 }

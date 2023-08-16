@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(
@@ -32,8 +33,8 @@ public class PostModel {
     private String gender;
     private Integer age;
     private String breed;
-    @Embedded
-    private PostImages imageFile;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<PostImagesModel> images;
     private String description;
     @Embedded
     private PostLocation location;

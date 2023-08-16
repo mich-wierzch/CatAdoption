@@ -41,6 +41,7 @@ public class UserService implements UserDetailsService {
     private final PostRepository postRepository;
     private final UserMapper userMapper;
     private final UserSessionMapper userSessionMapper;
+    private final AuthenticationService authenticationService;
 
 
     public String loginUser(LoginRequestDto loginRequest,
@@ -95,7 +96,7 @@ public class UserService implements UserDetailsService {
 
     public UserSessionDto isUserSessionActive(){
         try {
-            UserModel user = userRepository.findByUserId(getCurrentUserId());
+            UserModel user = userRepository.findByUserId(authenticationService.getCurrentUserId());
             return userSessionMapper.convertUserSessionToDto(user);
         } catch (NullPointerException e){
             return null;
@@ -106,7 +107,7 @@ public class UserService implements UserDetailsService {
     public UserDto updateUserInformation(UserDto user){
         try {
 
-            UserModel existingUser = userRepository.findByUserId(getCurrentUserId());
+            UserModel existingUser = userRepository.findByUserId(authenticationService.getCurrentUserId());
 
             boolean usernameExists = userRepository.existsByUsername(user.getUsername());
             if (!usernameExists) {
@@ -127,7 +128,7 @@ public class UserService implements UserDetailsService {
 
     public String updatePassword(String oldPassword, String newPassword){
     try {
-        UserModel existingUser = userRepository.findByUserId(getCurrentUserId());
+        UserModel existingUser = userRepository.findByUserId(authenticationService.getCurrentUserId());
 
         if (bCryptPasswordEncoder.matches(oldPassword, existingUser.getPassword())) {
 
@@ -147,7 +148,7 @@ public class UserService implements UserDetailsService {
 
     public UserDto deleteUser(String password,HttpServletRequest request){
 
-        Long userId = getCurrentUserId();
+        Long userId = authenticationService.getCurrentUserId();
 
         UserModel user = userRepository.findByUserId(userId);
     try {
@@ -169,14 +170,6 @@ public class UserService implements UserDetailsService {
     }
     }
 
-    public Authentication getCurrentAuthentication(){
-        return SecurityContextHolder.getContext().getAuthentication();
-    }
-
-    public Long getCurrentUserId(){
-        Authentication authentication = getCurrentAuthentication();
-        return ((UserModel) authentication.getPrincipal()).getUserId();
-    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

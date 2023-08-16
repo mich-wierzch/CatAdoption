@@ -23,4 +23,11 @@ public class UserCommentController {
     {
         return userCommentService.findAllCommentsForUser(userId);
     }
+
+    @DeleteMapping("/remove/{commentId}")
+    public UserCommentDto removeComment(@PathVariable Long commentId){
+        return userCommentService.removeComment(commentId);
+    }
+
+
 }
