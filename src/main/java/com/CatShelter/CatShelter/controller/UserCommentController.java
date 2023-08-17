@@ -28,6 +28,10 @@ public class UserCommentController {
     public UserCommentDto removeComment(@PathVariable Long commentId){
         return userCommentService.removeComment(commentId);
     }
+    @PatchMapping("/edit/{commentId}")
+    public UserCommentDto editComment(@PathVariable Long commentId, @RequestParam String text){
+        return userCommentService.editComment(commentId, text);
+    }
 
 
 }
