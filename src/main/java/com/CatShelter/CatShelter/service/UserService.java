@@ -14,6 +14,9 @@ import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -44,8 +47,8 @@ public class UserService implements UserDetailsService {
     private final AuthenticationService authenticationService;
 
 
-    public String loginUser(LoginRequestDto loginRequest,
-                            AuthenticationManager authenticationManager, HttpServletRequest request){
+    public ResponseEntity<String> loginUser(LoginRequestDto loginRequest,
+                                            AuthenticationManager authenticationManager, HttpServletRequest request){
 
         try {
             final Authentication authentication = authenticationManager.authenticate(
@@ -58,10 +61,9 @@ public class UserService implements UserDetailsService {
             HttpSession session = request.getSession(true);
             session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, securityContext );
             System.out.println(authentication.getName());
-            return "Logged in as " + authentication.getName();
+            return ResponseEntity.ok("Logged in as " + authentication.getName());
         } catch (NullPointerException | AuthenticationException e){
-            throw new IllegalArgumentException("Invalid Credentials");
-
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Authentication failed:\n" + e.getMessage());
         }
     }
 
