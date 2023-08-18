@@ -30,9 +30,9 @@ public class UserController {
 
 
     @PostMapping(path="/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String add(@RequestBody RegisterRequestDto registerRequest){
-       userService.addUser(registerRequest);
-       return "Registered";
+    public ResponseEntity<String> add(@RequestBody RegisterRequestDto registerRequest){
+      return userService.addUser(registerRequest);
+
     }
 
     @GetMapping(path="/session")

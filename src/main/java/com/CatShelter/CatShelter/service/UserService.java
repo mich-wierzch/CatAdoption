@@ -4,6 +4,8 @@ import com.CatShelter.CatShelter.dto.LoginRequestDto;
 import com.CatShelter.CatShelter.dto.RegisterRequestDto;
 import com.CatShelter.CatShelter.dto.UserDto;
 import com.CatShelter.CatShelter.dto.UserSessionDto;
+import com.CatShelter.CatShelter.exceptions.EmailTakenException;
+import com.CatShelter.CatShelter.exceptions.UsernameTakenException;
 import com.CatShelter.CatShelter.mapper.UserMapper;
 import com.CatShelter.CatShelter.mapper.UserSessionMapper;
 import com.CatShelter.CatShelter.model.PostModel;
@@ -14,6 +16,7 @@ import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.apache.catalina.valves.CrawlerSessionManagerValve;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,14 +70,14 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public RegisterRequestDto addUser(RegisterRequestDto registerRequest){
-
+    public ResponseEntity<String> addUser(RegisterRequestDto registerRequest){
+    try {
         if (userRepository.findByUsername(registerRequest.getUsername()) != null &&
-                !Objects.equals(registerRequest.getUsername(), "anonymousUser")){
-            throw new IllegalStateException("Username taken");
+                !Objects.equals(registerRequest.getUsername(), "anonymousUser")) {
+            throw new UsernameTakenException("Username taken");
         }
-        if(userRepository.existsByEmail(registerRequest.getEmail())){
-            throw new IllegalStateException("Email already in use");
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            throw new EmailTakenException("Email already in use");
         }
         UserModel userModel = UserModel.builder()
                 .username(registerRequest.getUsername())
@@ -83,7 +86,10 @@ public class UserService implements UserDetailsService {
                 .userRole(UserRole.USER)
                 .build();
         userRepository.save(userModel);
-        return registerRequest;
+        return ResponseEntity.ok("Registered successfully as " + registerRequest.getUsername());
+    } catch (UsernameTakenException | EmailTakenException e){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Registration failed: \n" + e.getMessage());
+    }
 
     }
 
