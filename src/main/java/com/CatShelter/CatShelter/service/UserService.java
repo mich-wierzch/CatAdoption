@@ -121,7 +121,7 @@ public class UserService implements UserDetailsService {
             if (!usernameExists) {
                 existingUser.setUsername(Optional.ofNullable(user.getUsername()).orElse(existingUser.getUsername()));
             } else {
-                throw new IllegalArgumentException("Username already taken!");
+                throw new UsernameTakenException("Username already taken!");
             }
             existingUser.setFirstName(Optional.ofNullable(user.getFirstName()).orElse(existingUser.getFirstName()));
             existingUser.setLastName(Optional.ofNullable(user.getLastName()).orElse(existingUser.getLastName()));

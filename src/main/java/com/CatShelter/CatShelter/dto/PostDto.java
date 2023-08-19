@@ -10,11 +10,13 @@ import java.util.List;
 @Data
 @Builder
 public class PostDto {
+
+    private Long id;
     private String name;
     private String gender;
     private Integer age;
     private String breed;
-    private List<PostImageDto> images;
+    private List<String> images;
     private String description;
     private PostLocation location;
     private LocalDate createdAt;
