@@ -10,7 +10,7 @@
 //import java.util.List;
 //
 //@RestController
-//@RequestMapping("/api/message")
+//@RequestMapping("/api/messages")
 //@AllArgsConstructor
 //public class MessageController {
 //
@@ -21,7 +21,7 @@
 //        return messageService.sendMessage(textMessage, userId);
 //    }
 //
-//    @GetMapping("/findAllReceived/{userId}")
+//    @GetMapping("/find-all-received/{userId}")
 //    public List<ReceivedChatMessageDto> getReceivedMessages(@PathVariable Long userId){
 //        return messageService.getReceivedMessages(userId);
 //    }

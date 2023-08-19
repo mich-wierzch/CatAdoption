@@ -14,7 +14,7 @@ import java.util.List;
 public class CatController {
 
     private final CatService catService;
-    @GetMapping("/getBreeds")
+    @GetMapping("/breeds")
     public List<String> getCatBreeds(){
         String filePath = "src/main/resources/catBreeds.txt";
         return catService.readCatBreeds(filePath);
