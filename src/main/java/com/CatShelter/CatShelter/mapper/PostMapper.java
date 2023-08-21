@@ -1,13 +1,11 @@
 package com.CatShelter.CatShelter.mapper;
 
 import com.CatShelter.CatShelter.dto.PostDto;
-import com.CatShelter.CatShelter.dto.PostImageDto;
 import com.CatShelter.CatShelter.model.PostImagesModel;
 import com.CatShelter.CatShelter.model.PostModel;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class PostMapper {

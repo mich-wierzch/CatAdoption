@@ -9,7 +9,6 @@ import lombok.Data;
 @Builder
 public class PostImageDto {
     private String image;
-    @JsonIgnore
     @JsonProperty("isFeatured")
     private boolean isFeatured;
 }
