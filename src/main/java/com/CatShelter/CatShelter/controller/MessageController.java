@@ -21,7 +21,7 @@
 //        return messageService.sendMessage(textMessage, userId);
 //    }
 //
-//    @GetMapping("/find-all-received/{userId}")
+//    @GetMapping("/received/{userId}")
 //    public List<ReceivedChatMessageDto> getReceivedMessages(@PathVariable Long userId){
 //        return messageService.getReceivedMessages(userId);
 //    }

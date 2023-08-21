@@ -6,10 +6,13 @@ import com.CatShelter.CatShelter.model.UserCommentModel;
 import com.CatShelter.CatShelter.repository.UserCommentRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.SplittableRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,7 +23,7 @@ public class UserCommentService {
     private final UserCommentMapper userCommentMapper;
     private final AuthenticationService authenticationService;
 
-    public String addComment(Long userId, String text){
+    public ResponseEntity<String> addComment(Long userId, String text){
         try {
             UserCommentModel comment = UserCommentModel.builder()
                     .user(userRepository.findByUserId(userId))
@@ -29,9 +32,10 @@ public class UserCommentService {
                     .timestamp(LocalDateTime.now())
                     .build();
             userCommentRepository.save(comment);
-            return "Comment added";
+            return ResponseEntity.ok("Comment added");
         } catch (NullPointerException e){
-            return null;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user with id " + userId + " found or " +
+                    "no user logged in");
         }
     }
 
@@ -42,29 +46,29 @@ public class UserCommentService {
                 .collect(Collectors.toList());
     }
 
-    public UserCommentDto removeComment(Long commentId){
+    public ResponseEntity<String> removeComment(Long commentId){
         UserCommentModel comment = userCommentRepository.findByCommentId(commentId);
         try {
             if (comment.getUser().getUserId().equals(authenticationService.getCurrentUserId())
                     || comment.getCommenter().getUserId().equals(authenticationService.getCurrentUserId())) {
                 userCommentRepository.delete(comment);
-                return userCommentMapper.convertToDto(comment);
-            } else return null;
+                return ResponseEntity.ok("Comment removed");
+            } else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authorized to delete this comment!");
         } catch (NullPointerException e){
-            return null;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No comment with id " + commentId + " found");
         }
 
     }
 
-    public UserCommentDto editComment(Long commentId, String text){
+    public ResponseEntity<String> editComment(Long commentId, String text){
         UserCommentModel comment = userCommentRepository.findByCommentId(commentId);
         try {
             if (comment.getCommenter().getUserId().equals(authenticationService.getCurrentUserId())) {
                 comment.setText(text);
-                return userCommentMapper.convertToDto(comment);
-            } else return null;
+                return ResponseEntity.ok("Comment edited");
+            } else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authorized to edit this post");
         } catch (NullPointerException e){
-            return null;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No comment with id " + commentId + " found");
         }
     }
 

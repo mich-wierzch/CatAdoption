@@ -14,6 +14,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +34,7 @@ public class PostService {
     private final PostMapper postMapper;
     private final AuthenticationService authenticationService;
 
-    public CreatePostDto createPost(CreatePostDto request) {
+    public ResponseEntity<String> createPost(CreatePostDto request) {
 
         try {
 
@@ -68,9 +70,9 @@ public class PostService {
                 isFirstImage = false;
             }
 
-            return request;
+            return ResponseEntity.ok("Post addded successfully");
         } catch (NullPointerException e) {
-            throw new IllegalArgumentException("No user logged in");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user logged in");
         }
     }
 
@@ -99,16 +101,21 @@ public class PostService {
         }
     }
 
-    public void deletePost(Long postId){
+    public ResponseEntity<String> deletePost(Long postId){
         //TODO: CHECK IF POST BEING DELETED BELONGS TO THE USER
-        PostModel post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("Post with id " + postId + " not found"));
 
-        postRepository.deleteById(postId);
+        try {
+            PostModel post = postRepository.findById(postId).orElseThrow(NullPointerException::new);
+
+            postRepository.deleteById(postId);
+            return ResponseEntity.ok("Post deleted");
+        } catch (NullPointerException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post with id " + postId + " not found");
+        }
 
     }
     @Transactional
-    public PostDto updatePost(Long postId, UpdatePostDto updatePostDto){
+    public ResponseEntity<String> updatePost(Long postId, UpdatePostDto updatePostDto){
     //TODO: IMPLEMENT CHECKING IF POST BEING UPDATED BELONGS TO THE USER
         try {
             PostModel post = postRepository.findByPostId(postId);
@@ -149,9 +156,9 @@ public class PostService {
 
 
 
-            return postMapper.convertToDto(post);
+            return ResponseEntity.ok("Post updated");
         } catch (NullPointerException e){
-            throw new IllegalArgumentException("No post with id" + postId + " found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No post with id " + postId + " found");
         }
 
     }

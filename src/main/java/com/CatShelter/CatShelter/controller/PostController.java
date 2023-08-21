@@ -6,6 +6,7 @@ import com.CatShelter.CatShelter.dto.UpdatePostDto;
 import com.CatShelter.CatShelter.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -18,7 +19,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping(path="/add")
-    public CreatePostDto add(@RequestBody CreatePostDto createPostDto) {
+    public ResponseEntity<String> add(@RequestBody CreatePostDto createPostDto) {
         return postService.createPost(createPostDto);
 
     }
@@ -44,13 +45,13 @@ public class PostController {
     }
 
     @DeleteMapping(path="/delete/{postId}")
-    public String deletePost(@PathVariable Long postId) {
-        postService.deletePost(postId);
-        return "Post deleted";
+    public ResponseEntity<String> deletePost(@PathVariable Long postId) {
+        return postService.deletePost(postId);
+
     }
 
     @PatchMapping(path="/update/{postId}")
-    public PostDto updatePost(@PathVariable Long postId,
+    public ResponseEntity<String> updatePost(@PathVariable Long postId,
                                     @RequestBody UpdatePostDto updatePostDto){
         return postService.updatePost(postId, updatePostDto);
     }
