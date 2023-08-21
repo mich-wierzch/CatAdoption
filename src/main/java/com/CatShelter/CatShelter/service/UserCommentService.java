@@ -56,5 +56,17 @@ public class UserCommentService {
 
     }
 
+    public UserCommentDto editComment(Long commentId, String text){
+        UserCommentModel comment = userCommentRepository.findByCommentId(commentId);
+        try {
+            if (comment.getCommenter().getUserId().equals(authenticationService.getCurrentUserId())) {
+                comment.setText(text);
+                return userCommentMapper.convertToDto(comment);
+            } else return null;
+        } catch (NullPointerException e){
+            return null;
+        }
+    }
+
 
 }

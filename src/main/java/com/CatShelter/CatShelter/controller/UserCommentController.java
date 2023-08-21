@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path="/api/comment")
+@RequestMapping(path="/api/comments")
 @RequiredArgsConstructor
 public class UserCommentController {
     private final UserCommentService userCommentService;
@@ -18,7 +18,7 @@ public class UserCommentController {
         return userCommentService.addComment(userId, text);
     }
 
-    @GetMapping("/findAll/{userId}")
+    @GetMapping("/find-all/{userId}")
     public List<UserCommentDto> findAllCommentsForUser(@PathVariable Long userId)
     {
         return userCommentService.findAllCommentsForUser(userId);
@@ -27,6 +27,10 @@ public class UserCommentController {
     @DeleteMapping("/remove/{commentId}")
     public UserCommentDto removeComment(@PathVariable Long commentId){
         return userCommentService.removeComment(commentId);
+    }
+    @PatchMapping("/edit/{commentId}")
+    public UserCommentDto editComment(@PathVariable Long commentId, @RequestParam String text){
+        return userCommentService.editComment(commentId, text);
     }
 
 

@@ -22,19 +22,19 @@ public class PostController {
         return postService.createPost(createPostDto);
 
     }
-    @GetMapping(path="/getAll")
+    @GetMapping(path="/all")
     public List<PostDto> getPosts(@RequestParam int page, @RequestParam int size){
         PageRequest pageable = PageRequest.of(page, size);
         return postService.findAllPosts(pageable);
     }
 
-    @GetMapping(path="/getByUser/{userId}")
+    @GetMapping(path="/by-user/{userId}")
     public List<PostDto> getPostsByUser(@PathVariable Long userId, @RequestParam int page, @RequestParam int size){
         PageRequest pageable = PageRequest.of(page, size);
         return postService.findPostsByUser(userId, pageable);
     }
 
-    @GetMapping(path="/getByPostId/{postId}")
+    @GetMapping(path="/by-post-id/{postId}")
     public PostDto getPostByPostId(@PathVariable Long postId){
         return postService.findPostByPostId(postId);
     }

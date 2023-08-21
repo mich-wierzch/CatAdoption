@@ -8,6 +8,7 @@ import com.CatShelter.CatShelter.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,15 +23,15 @@ public class UserController {
     @CrossOrigin
     @PostMapping(path="/login",
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    String login(@RequestBody LoginRequestDto loginRequest, HttpServletRequest request){
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequest, HttpServletRequest request){
         return userService.loginUser(loginRequest, authenticationManager, request);
     }
 
 
     @PostMapping(path="/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String add(@RequestBody RegisterRequestDto registerRequest){
-       userService.addUser(registerRequest);
-       return "Registered";
+    public ResponseEntity<String> add(@RequestBody RegisterRequestDto registerRequest){
+      return userService.addUser(registerRequest);
+
     }
 
     @GetMapping(path="/session")
@@ -44,13 +45,13 @@ public class UserController {
     }
 
 
-    @PatchMapping(path="/update/details")
+    @PatchMapping(path="/update-details")
     public UserDto updateUserDetails(UserDto user){
         return userService.updateUserInformation(user);
 
     }
 
-    @PostMapping(path="/update/password")
+    @PostMapping(path="/update-password")
     public String updateUserPassword(@RequestParam String oldPassword, @RequestParam String newPassword){
         return userService.updatePassword(oldPassword, newPassword);
     }

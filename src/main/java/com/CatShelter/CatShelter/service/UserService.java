@@ -4,6 +4,8 @@ import com.CatShelter.CatShelter.dto.LoginRequestDto;
 import com.CatShelter.CatShelter.dto.RegisterRequestDto;
 import com.CatShelter.CatShelter.dto.UserDto;
 import com.CatShelter.CatShelter.dto.UserSessionDto;
+import com.CatShelter.CatShelter.exceptions.EmailTakenException;
+import com.CatShelter.CatShelter.exceptions.UsernameTakenException;
 import com.CatShelter.CatShelter.mapper.UserMapper;
 import com.CatShelter.CatShelter.mapper.UserSessionMapper;
 import com.CatShelter.CatShelter.model.PostModel;
@@ -14,6 +16,10 @@ import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.apache.catalina.valves.CrawlerSessionManagerValve;
+import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -44,8 +50,8 @@ public class UserService implements UserDetailsService {
     private final AuthenticationService authenticationService;
 
 
-    public String loginUser(LoginRequestDto loginRequest,
-                            AuthenticationManager authenticationManager, HttpServletRequest request){
+    public ResponseEntity<String> loginUser(LoginRequestDto loginRequest,
+                                            AuthenticationManager authenticationManager, HttpServletRequest request){
 
         try {
             final Authentication authentication = authenticationManager.authenticate(
@@ -58,21 +64,20 @@ public class UserService implements UserDetailsService {
             HttpSession session = request.getSession(true);
             session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, securityContext );
             System.out.println(authentication.getName());
-            return "Logged in as " + authentication.getName();
+            return ResponseEntity.ok("Logged in as " + authentication.getName());
         } catch (NullPointerException | AuthenticationException e){
-            throw new IllegalArgumentException("Invalid Credentials");
-
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Authentication failed:\n" + e.getMessage());
         }
     }
 
-    public RegisterRequestDto addUser(RegisterRequestDto registerRequest){
-
+    public ResponseEntity<String> addUser(RegisterRequestDto registerRequest){
+    try {
         if (userRepository.findByUsername(registerRequest.getUsername()) != null &&
-                !Objects.equals(registerRequest.getUsername(), "anonymousUser")){
-            throw new IllegalStateException("Username taken");
+                !Objects.equals(registerRequest.getUsername(), "anonymousUser")) {
+            throw new UsernameTakenException("Username taken");
         }
-        if(userRepository.existsByEmail(registerRequest.getEmail())){
-            throw new IllegalStateException("Email already in use");
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            throw new EmailTakenException("Email already in use");
         }
         UserModel userModel = UserModel.builder()
                 .username(registerRequest.getUsername())
@@ -81,7 +86,10 @@ public class UserService implements UserDetailsService {
                 .userRole(UserRole.USER)
                 .build();
         userRepository.save(userModel);
-        return registerRequest;
+        return ResponseEntity.ok("Registered successfully as " + registerRequest.getUsername());
+    } catch (UsernameTakenException | EmailTakenException e){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Registration failed: \n" + e.getMessage());
+    }
 
     }
 
@@ -113,7 +121,7 @@ public class UserService implements UserDetailsService {
             if (!usernameExists) {
                 existingUser.setUsername(Optional.ofNullable(user.getUsername()).orElse(existingUser.getUsername()));
             } else {
-                throw new IllegalArgumentException("Username already taken!");
+                throw new UsernameTakenException("Username already taken!");
             }
             existingUser.setFirstName(Optional.ofNullable(user.getFirstName()).orElse(existingUser.getFirstName()));
             existingUser.setLastName(Optional.ofNullable(user.getLastName()).orElse(existingUser.getLastName()));
