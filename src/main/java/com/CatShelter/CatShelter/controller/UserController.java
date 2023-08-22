@@ -1,9 +1,6 @@
 package com.CatShelter.CatShelter.controller;
 
-import com.CatShelter.CatShelter.dto.LoginRequestDto;
-import com.CatShelter.CatShelter.dto.RegisterRequestDto;
-import com.CatShelter.CatShelter.dto.UserDto;
-import com.CatShelter.CatShelter.dto.UserSessionDto;
+import com.CatShelter.CatShelter.dto.*;
 import com.CatShelter.CatShelter.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestController
 @RequestMapping(path="/api/user")
@@ -46,21 +44,25 @@ public class UserController {
 
 
     @PatchMapping(path="/update-details")
-    public UserDto updateUserDetails(UserDto user){
+    public ResponseEntity<String> updateUserDetails(UserDto user){
         return userService.updateUserInformation(user);
 
     }
 
     @PostMapping(path="/update-password")
-    public String updateUserPassword(@RequestParam String oldPassword, @RequestParam String newPassword){
+    public ResponseEntity<String> updateUserPassword(@RequestParam String oldPassword, @RequestParam String newPassword){
         return userService.updatePassword(oldPassword, newPassword);
     }
 
     @DeleteMapping(path="/delete")
-    public UserDto deleteUser(@RequestParam String password,HttpServletRequest request){
+    public ResponseEntity<String> deleteUser(@RequestParam String password,HttpServletRequest request){
         return userService.deleteUser(password,request);
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<String> handleTypeMismatchException(){
+        return null;
+    }
 
 
 }

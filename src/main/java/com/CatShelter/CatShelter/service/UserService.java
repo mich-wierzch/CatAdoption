@@ -16,8 +16,6 @@ import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
-import org.apache.catalina.valves.CrawlerSessionManagerValve;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -66,7 +64,7 @@ public class UserService implements UserDetailsService {
             System.out.println(authentication.getName());
             return ResponseEntity.ok("Logged in as " + authentication.getName());
         } catch (NullPointerException | AuthenticationException e){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Authentication failed:\n" + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed:\n" + e.getMessage());
         }
     }
 
@@ -88,7 +86,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(userModel);
         return ResponseEntity.ok("Registered successfully as " + registerRequest.getUsername());
     } catch (UsernameTakenException | EmailTakenException e){
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Registration failed: \n" + e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Registration failed: \n" + e.getMessage());
     }
 
     }
@@ -98,7 +96,7 @@ public class UserService implements UserDetailsService {
         UserModel user = userRepository.findByUserId(userId);
         return userMapper.convertUserToDto(user);
     } catch (NullPointerException e) {
-        throw new IllegalArgumentException("User with id " + userId + " not found");
+        return null;
     }
     }
 
@@ -112,7 +110,7 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public UserDto updateUserInformation(UserDto user){
+    public ResponseEntity<String> updateUserInformation(UserDto user){
         try {
 
             UserModel existingUser = userRepository.findByUserId(authenticationService.getCurrentUserId());
@@ -121,20 +119,20 @@ public class UserService implements UserDetailsService {
             if (!usernameExists) {
                 existingUser.setUsername(Optional.ofNullable(user.getUsername()).orElse(existingUser.getUsername()));
             } else {
-                throw new UsernameTakenException("Username already taken!");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username already taken!");
             }
             existingUser.setFirstName(Optional.ofNullable(user.getFirstName()).orElse(existingUser.getFirstName()));
             existingUser.setLastName(Optional.ofNullable(user.getLastName()).orElse(existingUser.getLastName()));
             existingUser.setMobile(Optional.ofNullable(user.getMobile()).orElse(existingUser.getMobile()));
 
             userRepository.save(existingUser);
-            return userMapper.convertUserToDto(existingUser);
+            return ResponseEntity.ok("Details updated successfully");
         } catch (NullPointerException e){
             return null;
         }
     }
 
-    public String updatePassword(String oldPassword, String newPassword){
+    public ResponseEntity<String> updatePassword(String oldPassword, String newPassword){
     try {
         UserModel existingUser = userRepository.findByUserId(authenticationService.getCurrentUserId());
 
@@ -144,9 +142,9 @@ public class UserService implements UserDetailsService {
 
             userRepository.save(existingUser);
 
-            return "Password updated";
+            return ResponseEntity.ok("Password updated successfully");
         } else {
-            return "Wrong password";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong password");
         }
     } catch (NullPointerException e){
         return null;
@@ -154,12 +152,12 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public UserDto deleteUser(String password,HttpServletRequest request){
-
+    public ResponseEntity<String> deleteUser(String password,HttpServletRequest request){
+        try {
         Long userId = authenticationService.getCurrentUserId();
 
         UserModel user = userRepository.findByUserId(userId);
-    try {
+
         if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
 
             List<PostModel> userPosts = postRepository.findByUserUserId(userId);
@@ -169,12 +167,12 @@ public class UserService implements UserDetailsService {
             if (session != null) {
                 session.invalidate();
             }
-            return userMapper.convertUserToDto(user);
+            return ResponseEntity.ok("User " + user.getUsername() + "deleted successfully");
         } else {
-            throw new IllegalArgumentException("Incorrect password!");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect password!");
         }
     } catch (NullPointerException e){
-        throw new IllegalArgumentException("User is not logged in");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not logged in");
     }
     }
 
