@@ -40,8 +40,8 @@ public class UserCommentService {
     }
 
     public List<UserCommentDto> findAllCommentsForUser(Long userId){
-        List<UserCommentModel> comment = userCommentRepository.findByUserUserId(userId);
-        return comment.stream()
+        List<UserCommentModel> comments = userCommentRepository.findByUserUserId(userId);
+        return comments.stream()
                 .map(userCommentMapper::convertToDto)
                 .collect(Collectors.toList());
     }
