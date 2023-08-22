@@ -12,7 +12,7 @@ Hibernate, PostgreSQL
 
 **Extra Dependencies:**
 
-Lombok, BCrypt, OpenAPI (Swagger), Java Faker, Cloudinary
+Lombok, BCrypt, OpenAPI (Swagger), Java Faker, RabbitMQ
 
 
 
@@ -25,6 +25,8 @@ Lombok, BCrypt, OpenAPI (Swagger), Java Faker, Cloudinary
 - Create New Cat Post: Authenticated users can create new cat posts for adoption. They need to provide cat details like name, age, breed, image, and description.
 - Update User Profile: Users can update their profile information.
 - Delete User Account: Authenticated users can delete their account. Deleting an account will remove all associated cat posts.
+- Comments: Users are able to comment on other users profiles.
+- Messages: Users can contact other users through message system (Not implemented yet)
 
 
 ## API Documentation
@@ -37,13 +39,13 @@ You can find all available endpoints using Swagger. After running the applicatio
     /api/posts/add - Add a new post. User most be logged in.
 ```
 ```bash
-    /api/posts/getAll - Fetch all posts from the database
+    /api/posts/all - Fetch all posts from the database
 ```
 ```bash
-    /api/posts/getByUser/{userId} - Fetch posts that belong to particular user
+    /api/posts/by-user/{userId} - Fetch posts that belong to particular user
 ```
 ```bash
-    /api/posts/getByPostId - Fetch post by it's post id
+    /api/posts/by-post-id - Fetch post by it's post id
 ```
 ```bash
     /api/posts/delete/{postId} - Delete post by it's post id
@@ -67,14 +69,36 @@ You can find all available endpoints using Swagger. After running the applicatio
     /api/user/details/{userId} - Fetch details of given user
 ```
 ```bash
-    /api/user/update/details - Update certain details for currently active user
+    /api/user/update-details - Update certain details for currently active user
 ```
 ```bash
-    /api/user/update/password - Update password for currently logged in user
+    /api/user/update-password - Update password for currently logged in user
 ```
 ```bash
     /api/user/delete - Delete an user. User must be authorized first to delete the account.
 ```
+
+**Comments Controller**
+```bash
+    /api/comments/add/{userId} - Add comment for a user
+```
+```bash
+    /api/comments/find-all- Find all comments for user in a database
+```
+```bash
+    /api/comments/remove/{commentId} - Remove comment with particular id
+```
+```bash
+    /api/comments/edit/{commentId} - Edit comment with particular id
+```
+**MessageController** (Not yet implemented)
+```bash
+    /api/messages/send/{userId} - Send message to an user
+```
+```bash
+    /api/messages/received/{userId} - Find all received messages for user
+```
+
 
 
 
