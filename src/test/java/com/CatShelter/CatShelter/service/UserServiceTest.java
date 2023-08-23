@@ -1,5 +1,7 @@
 package com.CatShelter.CatShelter.service;
 
+import com.CatShelter.CatShelter.dto.RegisterRequestDto;
+import com.CatShelter.CatShelter.dto.UserDto;
 import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.model.UserRole;
 import com.CatShelter.CatShelter.repository.UserRepository;
@@ -7,18 +9,23 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class UserServiceTest {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     UserModel newUser;
-    @BeforeEach
+
     void createUser(){
         this.newUser = UserModel.builder()
                 .username("TestUser123")
@@ -31,42 +38,40 @@ class UserServiceTest {
                 .build();
         userRepository.save(newUser);
     }
-
-    @AfterEach
     void deleteUser(){
         userRepository.delete(newUser);
     }
 
+
     @Test
-    void shouldSeeIfUserAddedCorrectlyToDatabase() {
-        //given createUser()
+    void shouldRegisterNewUserAndAddUserToDatabase(){
+        //given
+        RegisterRequestDto requestDto = new RegisterRequestDto();
+        requestDto.setUsername("TestUser123");
+        requestDto.setEmail("TestEmail123@gmail.com");
+        requestDto.setPassword("TestPassword123@gmail.com");
         //when
-        boolean exists = userRepository.existsByUsername(newUser.getUsername());
+        userService.addUser(requestDto);
         //then
-        assertTrue(exists);
+        assertTrue(userRepository.existsByUsername(requestDto.getUsername()));
+        userRepository.delete(userRepository.findByUsername(requestDto.getUsername()));
     }
 
     @Test
-    void shouldFindUserInTheDatabaseAndUpdateUserInformation(){
+    void shouldFetchUserInformation(){
         //given
-        UserModel existingUser = userRepository.findByUsername("TestUser123");
+        createUser();
+        Long userId = newUser.getUserId();
         //when
-        String oldFirstName = existingUser.getFirstName();
-        existingUser.setFirstName("Arnold");
-        userRepository.save(existingUser);
-        String newFirstName = existingUser.getFirstName();
+        UserDto userDto = userService.fetchUserInformation(userId);
         //then
-        assertNotEquals(oldFirstName, newFirstName);
+        assertNotNull(userDto);
+
+        deleteUser();
+
     }
-    @Test
-    void shouldFindUserInTheDatabaseAndDeleteUserFromDatabase(){
-        //given
-        UserModel existingUser = userRepository.findByUsername("TestUser123");
-        //when
-        userRepository.delete(existingUser);
-        //then
-        assertFalse(userRepository.existsByUsername("TestUser123"));
-    }
+
+
 
 
 }
