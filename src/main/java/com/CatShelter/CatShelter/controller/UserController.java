@@ -10,6 +10,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path="/api/user")
 @RequiredArgsConstructor
@@ -35,6 +37,11 @@ public class UserController {
     @GetMapping(path="/session")
     public UserSessionDto userSession(){
         return userService.isUserSessionActive();
+    }
+
+    @GetMapping(path="/all-registered")
+    public List<UserDto> findAllRegisteredUsers(){
+        return userService.findAllUsers();
     }
 
     @GetMapping(path="/details/{userId}")

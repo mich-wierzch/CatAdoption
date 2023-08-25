@@ -40,7 +40,7 @@ public class UserCommentService {
     }
 
     public List<UserCommentDto> findAllCommentsForUser(Long userId){
-        List<UserCommentModel> comments = userCommentRepository.findByUserUserId(userId);
+        List<UserCommentModel> comments = userCommentRepository.findByUserUserIdOrderByTimestampDesc(userId);
         return comments.stream()
                 .map(userCommentMapper::convertToDto)
                 .collect(Collectors.toList());
@@ -65,6 +65,7 @@ public class UserCommentService {
         try {
             if (comment.getCommenter().getUserId().equals(authenticationService.getCurrentUserId())) {
                 comment.setText(text);
+                userCommentRepository.save(comment);
                 return ResponseEntity.ok("Comment edited");
             } else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authorized to edit this post");
         } catch (NullPointerException e){

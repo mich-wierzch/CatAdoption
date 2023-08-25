@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+
 public class MQConfig {
 
     public static final String QUEUE = "message_queue";
@@ -44,5 +45,7 @@ public class MQConfig {
         template.setMessageConverter(messageConverter());
         return  template;
     }
+
+
 
 }
