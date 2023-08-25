@@ -26,7 +26,7 @@ Lombok, BCrypt, OpenAPI (Swagger), Java Faker, RabbitMQ
 - Update User Profile: Users can update their profile information.
 - Delete User Account: Authenticated users can delete their account. Deleting an account will remove all associated cat posts.
 - Comments: Users are able to comment on other users profiles.
-- Messages: Users can contact other users through message system (Not implemented yet)
+- Messages: Users can contact other users through message system 
 
 
 ## API Documentation
@@ -66,6 +66,9 @@ You can find all available endpoints using Swagger. After running the applicatio
     /api/user/session - Returns information about active user session
 ```
 ```bash
+    /api/user/all-registered - Returns all registerd users
+```
+```bash
     /api/user/details/{userId} - Fetch details of given user
 ```
 ```bash
@@ -96,7 +99,10 @@ You can find all available endpoints using Swagger. After running the applicatio
     /api/messages/send/{userId} - Send message to an user
 ```
 ```bash
-    /api/messages/received/{userId} - Find all received messages for user
+    /api/messages/received-all/{userId} - Find all received messages for user
+```
+```bash
+    /api/messages/received-from/{senderId} - Find all received messages sent from particular user
 ```
 
 
@@ -123,11 +129,16 @@ Access the Swagger at:
 ```bash
 https://localhost:8080/swagger-ui/index.html
 ```
+Access RabbitMQ management system at:
+
+```bash
+https://localhost:15672/
+```
 **Currently this app only contains the backend - refer to API Documentation above to
 see the available endpoints.**
 
 
-**It is advised to use docker to run the application, otherwise it would require the user to manually set up a PostgreSQL database and change the application.properties configuration.**
+**It is advised to use docker to run the application, otherwise it would require the user to manually set up a PostgreSQL database and RabbitMQ server.**
 
 **You can automatically populate database with 3 users and 90 randomly generated posts with the provided TestDataLoader class. Before creating a docker container with "docker-compose up" uncomment the whole TestDataLoader class. Now while running the docker-compose up the database will be automatically filled with data so that you can test certain endpoints right away.**
 
