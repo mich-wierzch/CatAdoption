@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface UserCommentRepository extends JpaRepository<UserCommentModel, Long> {
-    List<UserCommentModel> findByUserUserId(Long userId);
+    List<UserCommentModel> findByUserUserIdOrderByTimestampDesc(Long userId);
 
     UserCommentModel findByCommentId(Long commentId);
 

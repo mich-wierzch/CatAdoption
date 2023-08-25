@@ -9,6 +9,7 @@ public class UserMapper {
 
     public UserDto convertUserToDto(UserModel userModel){
         return UserDto.builder()
+                .id(userModel.getUserId())
                 .username(userModel.getUsername())
                 .email(userModel.getEmail())
                 .firstName(userModel.getFirstName())

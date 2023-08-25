@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
@@ -98,6 +99,13 @@ public class UserService implements UserDetailsService {
     } catch (NullPointerException e) {
         return null;
     }
+    }
+
+    public List<UserDto> findAllUsers(){
+        List<UserModel> users = userRepository.findAll();
+        return users.stream()
+                .map(userMapper::convertUserToDto)
+                .collect(Collectors.toList());
     }
 
     public UserSessionDto isUserSessionActive(){
