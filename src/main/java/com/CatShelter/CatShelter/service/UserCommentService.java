@@ -25,6 +25,9 @@ public class UserCommentService {
 
     public ResponseEntity<String> addComment(Long userId, String text){
         try {
+            if (!userRepository.existsById(userId)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
             UserCommentModel comment = UserCommentModel.builder()
                     .user(userRepository.findByUserId(userId))
                     .commenter(userRepository.findByUserId(authenticationService.getCurrentUserId()))
@@ -34,8 +37,7 @@ public class UserCommentService {
             userCommentRepository.save(comment);
             return ResponseEntity.ok("Comment added");
         } catch (NullPointerException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user with id " + userId + " found or " +
-                    "no user logged in");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user logged in");
         }
     }
 
