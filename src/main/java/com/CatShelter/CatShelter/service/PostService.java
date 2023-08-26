@@ -45,8 +45,6 @@ public class PostService {
 
             List<String> imageUrls = request.getImages();
 
-
-
             PostModel postModel = PostModel.builder()
                     .name(request.getName())
                     .gender(request.getGender())
@@ -70,7 +68,7 @@ public class PostService {
                 isFirstImage = false;
             }
 
-            return ResponseEntity.ok("Post addded successfully");
+            return ResponseEntity.ok("Post added successfully");
         } catch (NullPointerException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user logged in");
         }
@@ -102,11 +100,12 @@ public class PostService {
     }
 
     public ResponseEntity<String> deletePost(Long postId){
-        //TODO: CHECK IF POST BEING DELETED BELONGS TO THE USER
-
         try {
             PostModel post = postRepository.findById(postId).orElseThrow(NullPointerException::new);
-
+            if (!post.getUser().getUserId().equals(authenticationService.getCurrentUserId())){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unable to delete post that doesn't belong" +
+                        "to user");
+            }
             postRepository.deleteById(postId);
             return ResponseEntity.ok("Post deleted");
         } catch (NullPointerException e){

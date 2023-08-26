@@ -7,6 +7,7 @@ import com.CatShelter.CatShelter.mapper.ReceivedChatMessageMapper;
 import com.CatShelter.CatShelter.model.ChatMessage;
 import com.CatShelter.CatShelter.repository.ChatMessageRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
+import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -33,12 +34,16 @@ public class MessageService {
 
     public ResponseEntity<String> sendMessage(SendChatMessageDto sendChatMessageDto, Long userId){
     try {
+        if (userId.equals(authenticationService.getCurrentUserId())){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Not allowed to send messages to oneself");
+        }
         ChatMessage message = ChatMessage.builder()
                 .senderId(authenticationService.getCurrentUserId())
                 .recipientId(userId)
                 .content(sendChatMessageDto.getContent())
                 .timestamp(new Date())
                 .build();
+
 
         template.convertAndSend(MQConfig.EXCHANGE,
                 MQConfig.ROUTING_KEY, message);
@@ -54,18 +59,27 @@ public class MessageService {
     }
 
     public List<ReceivedChatMessageDto> getAllReceivedMessages(Long userId){
-        List<ChatMessage> messages = chatMessageRepository.findAllByRecipientIdOrderBySenderId(userId);
-        return messages.stream()
-                .map(receivedChatMessageMapper::convertToDto)
-                .collect(Collectors.toList());
+        try {
+            if(!userId.equals(authenticationService.getCurrentUserId())) return null;
+            List<ChatMessage> messages = chatMessageRepository.findAllByRecipientIdOrderBySenderId(userId);
+            return messages.stream()
+                    .map(receivedChatMessageMapper::convertToDto)
+                    .collect(Collectors.toList());
+        } catch (NullPointerException e){
+            return null;
+        }
 
     }
 
     public List<ReceivedChatMessageDto> getMessagesBySender(Long senderId){
-        List<ChatMessage> messages = chatMessageRepository.findAllBySenderId(senderId);
-        return messages.stream()
-                .map(receivedChatMessageMapper::convertToDto)
-                .collect(Collectors.toList());
+        try {
+            List<ChatMessage> messages = chatMessageRepository.findAllBySenderIdAndRecipientId(senderId, authenticationService.getCurrentUserId());
+            return messages.stream()
+                    .map(receivedChatMessageMapper::convertToDto)
+                    .collect(Collectors.toList());
+        } catch (NullPointerException e){
+            return null;
+        }
     }
     @Scheduled(cron = "0 0 2 * * *")
     public void cleanupMessagesOlderThanThirtyDays(){
