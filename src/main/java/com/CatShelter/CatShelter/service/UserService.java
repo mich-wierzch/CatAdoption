@@ -1,9 +1,6 @@
 package com.CatShelter.CatShelter.service;
 
-import com.CatShelter.CatShelter.dto.LoginRequestDto;
-import com.CatShelter.CatShelter.dto.RegisterRequestDto;
-import com.CatShelter.CatShelter.dto.UserDto;
-import com.CatShelter.CatShelter.dto.UserSessionDto;
+import com.CatShelter.CatShelter.dto.*;
 import com.CatShelter.CatShelter.exceptions.EmailTakenException;
 import com.CatShelter.CatShelter.exceptions.UsernameTakenException;
 import com.CatShelter.CatShelter.mapper.UserMapper;
@@ -118,20 +115,20 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public ResponseEntity<String> updateUserInformation(UserDto user){
+    public ResponseEntity<String> updateUserInformation(UpdateUserDetailsDto userDetailsDto){
         try {
 
             UserModel existingUser = userRepository.findByUserId(authenticationService.getCurrentUserId());
 
-            boolean usernameExists = userRepository.existsByUsername(user.getUsername());
+            boolean usernameExists = userRepository.existsByUsername(userDetailsDto.getUsername());
             if (!usernameExists) {
-                existingUser.setUsername(Optional.ofNullable(user.getUsername()).orElse(existingUser.getUsername()));
+                existingUser.setUsername(Optional.ofNullable(userDetailsDto.getUsername()).orElse(existingUser.getUsername()));
             } else {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Username already taken!");
             }
-            existingUser.setFirstName(Optional.ofNullable(user.getFirstName()).orElse(existingUser.getFirstName()));
-            existingUser.setLastName(Optional.ofNullable(user.getLastName()).orElse(existingUser.getLastName()));
-            existingUser.setMobile(Optional.ofNullable(user.getMobile()).orElse(existingUser.getMobile()));
+            existingUser.setFirstName(Optional.ofNullable(userDetailsDto.getFirstName()).orElse(existingUser.getFirstName()));
+            existingUser.setLastName(Optional.ofNullable(userDetailsDto.getLastName()).orElse(existingUser.getLastName()));
+            existingUser.setMobile(Optional.ofNullable(userDetailsDto.getMobile()).orElse(existingUser.getMobile()));
 
             userRepository.save(existingUser);
             return ResponseEntity.ok("Details updated successfully");

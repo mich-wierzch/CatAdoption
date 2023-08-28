@@ -7,7 +7,6 @@ import com.CatShelter.CatShelter.mapper.ReceivedChatMessageMapper;
 import com.CatShelter.CatShelter.model.ChatMessage;
 import com.CatShelter.CatShelter.repository.ChatMessageRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
-import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

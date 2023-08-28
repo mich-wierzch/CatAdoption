@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(
+        name="post_images"
+)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
