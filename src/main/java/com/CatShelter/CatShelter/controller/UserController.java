@@ -51,7 +51,7 @@ public class UserController {
 
 
     @PatchMapping(path="/update-details")
-    public ResponseEntity<String> updateUserDetails(UpdateUserDetailsDto userDetailsDto){
+    public ResponseEntity<String> updateUserDetails(@RequestBody UpdateUserDetailsDto userDetailsDto){
         return userService.updateUserInformation(userDetailsDto);
 
     }

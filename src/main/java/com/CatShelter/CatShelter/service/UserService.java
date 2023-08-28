@@ -117,7 +117,7 @@ public class UserService implements UserDetailsService {
 
     public ResponseEntity<String> updateUserInformation(UpdateUserDetailsDto userDetailsDto){
         try {
-
+            System.out.println(userDetailsDto);
             UserModel existingUser = userRepository.findByUserId(authenticationService.getCurrentUserId());
 
             boolean usernameExists = userRepository.existsByUsername(userDetailsDto.getUsername());
