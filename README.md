@@ -94,7 +94,7 @@ You can find all available endpoints using Swagger. After running the applicatio
 ```bash
     /api/comments/edit/{commentId} - Edit comment with particular id
 ```
-**MessageController** (Not yet implemented)
+**MessageController** 
 ```bash
     /api/messages/send/{userId} - Send message to an user
 ```
