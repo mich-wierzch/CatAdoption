@@ -28,9 +28,9 @@ public class UserController {
     }
 
 
-    @PostMapping(path="/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> add(@RequestBody RegisterRequestDto registerRequest){
-      return userService.addUser(registerRequest);
+    @PostMapping(path="/register")
+    public ResponseEntity<String> register(@RequestBody RegisterRequestDto registerRequest){
+      return userService.registerUser(registerRequest);
 
     }
 
@@ -70,6 +70,8 @@ public class UserController {
     public ResponseEntity<String> handleTypeMismatchException(){
         return null;
     }
+
+
 
 
 }

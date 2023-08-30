@@ -51,7 +51,7 @@ class UserServiceTest {
         requestDto.setEmail("TestEmail123@gmail.com");
         requestDto.setPassword("TestPassword123@gmail.com");
         //when
-        userService.addUser(requestDto);
+        userService.registerUser(requestDto);
         //then
         assertTrue(userRepository.existsByUsername(requestDto.getUsername()));
         userRepository.delete(userRepository.findByUsername(requestDto.getUsername()));

@@ -13,6 +13,7 @@ import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -66,8 +67,9 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public ResponseEntity<String> addUser(RegisterRequestDto registerRequest){
+    public ResponseEntity<String> registerUser(RegisterRequestDto registerRequest){
     try {
+
         if (userRepository.findByUsername(registerRequest.getUsername()) != null &&
                 !Objects.equals(registerRequest.getUsername(), "anonymousUser")) {
             throw new UsernameTakenException("Username taken");
@@ -75,6 +77,9 @@ public class UserService implements UserDetailsService {
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
             throw new EmailTakenException("Email already in use");
         }
+        if (!isValidEmail(registerRequest.getEmail()))
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please provide valid email address");
+
         UserModel userModel = UserModel.builder()
                 .username(registerRequest.getUsername())
                 .email(registerRequest.getEmail())
@@ -117,7 +122,6 @@ public class UserService implements UserDetailsService {
 
     public ResponseEntity<String> updateUserInformation(UpdateUserDetailsDto userDetailsDto){
         try {
-            System.out.println(userDetailsDto);
             UserModel existingUser = userRepository.findByUserId(authenticationService.getCurrentUserId());
 
             boolean usernameExists = userRepository.existsByUsername(userDetailsDto.getUsername());
@@ -191,6 +195,10 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
+    }
+
+    public boolean isValidEmail(String email){
+        return EmailValidator.getInstance().isValid(email);
     }
 
 

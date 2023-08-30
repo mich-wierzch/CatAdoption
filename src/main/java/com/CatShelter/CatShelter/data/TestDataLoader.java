@@ -201,7 +201,7 @@
 //
 //        }
 //
-//
+//    logger.info("Completed loading test data");
 //    }
 //    public static String randomizeGender(int x){
 //        return x == 1 ? "Male" : "Female";
