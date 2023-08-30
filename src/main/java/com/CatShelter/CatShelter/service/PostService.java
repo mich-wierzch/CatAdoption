@@ -115,9 +115,12 @@ public class PostService {
     }
     @Transactional
     public ResponseEntity<String> updatePost(Long postId, UpdatePostDto updatePostDto){
-    //TODO: IMPLEMENT CHECKING IF POST BEING UPDATED BELONGS TO THE USER
+
         try {
             PostModel post = postRepository.findByPostId(postId);
+
+            if(!authenticationService.getCurrentUserId().equals(post.getUser().getUserId()))
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Post does not belong to the user");
 
             post.setName(Optional.ofNullable(updatePostDto.getName()).orElse(post.getName()));
             post.setGender(Optional.ofNullable(updatePostDto.getGender()).orElse(post.getGender()));
