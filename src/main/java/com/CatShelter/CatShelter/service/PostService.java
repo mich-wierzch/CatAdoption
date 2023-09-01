@@ -12,10 +12,12 @@ import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,15 +103,17 @@ public class PostService {
 
     public ResponseEntity<String> deletePost(Long postId){
         try {
-            PostModel post = postRepository.findById(postId).orElseThrow(NullPointerException::new);
+            PostModel post = postRepository.findById(postId).orElseThrow(EntityNotFoundException::new);
             if (!post.getUser().getUserId().equals(authenticationService.getCurrentUserId())){
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unable to delete post that doesn't belong" +
-                        "to user");
+                        " to user");
             }
             postRepository.deleteById(postId);
             return ResponseEntity.ok("Post deleted");
-        } catch (NullPointerException e){
+        } catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post with id " + postId + " not found");
+        } catch (NullPointerException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
         }
 
     }

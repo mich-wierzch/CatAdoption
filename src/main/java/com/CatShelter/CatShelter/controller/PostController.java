@@ -6,7 +6,6 @@ import com.CatShelter.CatShelter.dto.UpdatePostDto;
 import com.CatShelter.CatShelter.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;

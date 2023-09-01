@@ -3,6 +3,7 @@ package com.CatShelter.CatShelter.controller;
 import com.CatShelter.CatShelter.dto.UserCommentDto;
 import com.CatShelter.CatShelter.service.UserCommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +21,12 @@ public class UserCommentController {
     }
 
     @GetMapping("/find-all/{userId}")
-    public List<UserCommentDto> findAllCommentsForUser(@PathVariable Long userId)
+    public List<UserCommentDto> findAllCommentsForUser(@PathVariable Long userId,
+                                                       @RequestParam int page,
+                                                       @RequestParam int size)
     {
-        return userCommentService.findAllCommentsForUser(userId);
+        PageRequest pageable = PageRequest.of(page, size);
+        return userCommentService.findAllCommentsForUser(userId, pageable);
     }
 
     @DeleteMapping("/remove/{commentId}")

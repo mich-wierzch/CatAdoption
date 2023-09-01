@@ -5,16 +5,13 @@ import com.CatShelter.CatShelter.dto.UserDto;
 import com.CatShelter.CatShelter.model.UserModel;
 import com.CatShelter.CatShelter.model.UserRole;
 import com.CatShelter.CatShelter.repository.UserRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.TestPropertySource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 class UserServiceTest {
     @Autowired

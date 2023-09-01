@@ -6,6 +6,8 @@ import com.CatShelter.CatShelter.model.UserCommentModel;
 import com.CatShelter.CatShelter.repository.UserCommentRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,11 +43,13 @@ public class UserCommentService {
         }
     }
 
-    public List<UserCommentDto> findAllCommentsForUser(Long userId){
-        List<UserCommentModel> comments = userCommentRepository.findByUserUserIdOrderByTimestampDesc(userId);
-        return comments.stream()
-                .map(userCommentMapper::convertToDto)
-                .collect(Collectors.toList());
+    public List<UserCommentDto> findAllCommentsForUser(Long userId, PageRequest pageable){
+            Page<UserCommentModel> page = userCommentRepository.findByUserUserIdOrderByTimestampDesc(userId, pageable);
+            List<UserCommentModel> comments = page.getContent();
+            return comments.stream()
+                    .map(userCommentMapper::convertToDto)
+                    .collect(Collectors.toList());
+
     }
 
     public ResponseEntity<String> removeComment(Long commentId){
