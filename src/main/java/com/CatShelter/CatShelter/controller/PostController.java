@@ -35,7 +35,7 @@ public class PostController {
         return postService.findPostsByUser(userId, pageable);
     }
 
-    @GetMapping(path="/by-post-id/{postId}")
+    @GetMapping(path="/{postId}")
     public PostDto getPostByPostId(@PathVariable Long postId){
         return postService.findPostByPostId(postId);
     }
@@ -44,13 +44,13 @@ public class PostController {
         return null;
     }
 
-    @DeleteMapping(path="/delete/{postId}")
+    @DeleteMapping(path="/{postId}")
     public ResponseEntity<String> deletePost(@PathVariable Long postId) {
         return postService.deletePost(postId);
 
     }
 
-    @PatchMapping(path="/update/{postId}")
+    @PatchMapping(path="/{postId}")
     public ResponseEntity<String> updatePost(@PathVariable Long postId,
                                     @RequestBody UpdatePostDto updatePostDto){
         return postService.updatePost(postId, updatePostDto);

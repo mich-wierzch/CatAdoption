@@ -12,12 +12,10 @@ import com.CatShelter.CatShelter.repository.PostRepository;
 import com.CatShelter.CatShelter.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,7 +73,6 @@ public class PostService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user logged in");
         }
     }
-
     public List<PostDto> findAllPosts(PageRequest pageable){
         Page<PostModel> page = postRepository.findAll(pageable);
         List<PostModel> posts = page.getContent();
